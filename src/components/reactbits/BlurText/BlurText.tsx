@@ -1,5 +1,6 @@
 import { motion, type Transition, type Easing } from 'motion/react';
 import { useEffect, useRef, useState, useMemo } from 'react';
+import { useReduceMotion } from '../../../hooks/useReduceMotion';
 
 type BlurTextProps = {
   text?: string;
@@ -46,6 +47,7 @@ const BlurText: React.FC<BlurTextProps> = ({
   const elements = animateBy === 'words' ? text.split(' ') : text.split('');
   const [inView, setInView] = useState(false);
   const ref = useRef<HTMLParagraphElement>(null);
+  const reduceMotion = useReduceMotion();
 
   useEffect(() => {
     if (!ref.current) return;
@@ -87,8 +89,19 @@ const BlurText: React.FC<BlurTextProps> = ({
   const totalDuration = stepDuration * (stepCount - 1);
   const times = Array.from({ length: stepCount }, (_, i) => (stepCount === 1 ? 0 : i / (stepCount - 1)));
 
+  // Con "reducir movimiento" el texto aparece completo, sin animación
+  if (reduceMotion) {
+    return (
+      <p ref={ref} className={`blur-text ${className}`}>
+        {text}
+      </p>
+    );
+  }
+
   return (
     <p ref={ref} className={`blur-text ${className} flex flex-wrap`}>
+      {/* El lector de pantalla lee el texto completo y no letra por letra */}
+      <span className="sr-only">{text}</span>
       {elements.map((segment, index) => {
         const animateKeyframes = buildKeyframes(fromSnapshot, toSnapshots);
 
@@ -106,6 +119,7 @@ const BlurText: React.FC<BlurTextProps> = ({
             animate={inView ? animateKeyframes : fromSnapshot}
             transition={spanTransition}
             onAnimationComplete={index === elements.length - 1 ? onAnimationComplete : undefined}
+            aria-hidden="true"
             style={{
               display: 'inline-block',
               willChange: 'transform, filter, opacity'

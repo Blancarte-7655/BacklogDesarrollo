@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 const SIZES = {
   sm: 'text-xl',
-  md: 'text-[28px]',
+  md: 'text-[1.75rem]',
   lg: 'text-4xl',
   xl: 'text-5xl sm:text-6xl',
 };
@@ -55,8 +55,8 @@ export function ProductMark({ tone = 'color', label = 'UniAccess' }: { tone?: 'c
       <Wordmark size="sm" tone={tone} />
       <span className={`hidden h-7 w-px min-[420px]:block ${white ? 'bg-white/30' : 'bg-stone-300'}`} />
       <span className="hidden leading-tight min-[420px]:block">
-        <span className={`block font-display text-[13px] font-bold ${white ? 'text-white' : 'text-stone-900'}`}>{label}</span>
-        <span className={`block text-[10px] font-medium tracking-wide uppercase ${white ? 'text-white/70' : 'text-stone-500'}`}>
+        <span className={`block font-display text-[0.8125rem] font-bold ${white ? 'text-white' : 'text-stone-900'}`}>{label}</span>
+        <span className={`block text-xs font-medium tracking-wide uppercase ${white ? 'text-white/70' : 'text-stone-500'}`}>
           Universidad de Guadalajara
         </span>
       </span>

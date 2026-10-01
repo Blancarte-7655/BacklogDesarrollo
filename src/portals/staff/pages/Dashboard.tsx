@@ -11,6 +11,7 @@ import { buttonStyles } from '../../../ui/Button';
 import { Avatar, Badge, ErrorState, PageHeader, PageLoader, PulseDot, SectionCard, StatCard } from '../../../ui/Display';
 import { Segmented } from '../../../ui/Segmented';
 import { staffApi } from '../api';
+import { FlowAnalytics } from '../components/FlowAnalytics';
 import { useStaffContext } from '../context';
 
 type RoleFilter = PersonRole | 'invitado' | 'all';
@@ -128,7 +129,7 @@ export default function Dashboard() {
               {data.recent.map(event => (
                 <li key={event.id} className="flex items-center gap-3 border-l-2 border-stone-100 py-2 pl-4">
                   <span
-                    className={`-ml-[27px] grid size-6 shrink-0 place-items-center rounded-full text-white ring-4 ring-white ${event.type === 'in' ? 'bg-verde-600' : 'bg-terracota-500'}`}
+                    className={`-ml-[27px] grid size-6 shrink-0 place-items-center rounded-full text-white ring-4 ring-surface ${event.type === 'in' ? 'bg-brand' : 'bg-accent'}`}
                   >
                     {event.type === 'in' ? <LogIn className="size-3" /> : <LogOut className="size-3" />}
                   </span>
@@ -148,9 +149,11 @@ export default function Dashboard() {
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-stone-500">
-        <PulseDot className="bg-verde-500" />
+        <PulseDot className="bg-brand-bright" />
         Tablero en vivo · última actualización {formatTime(now.toISOString())}
       </div>
+
+      <FlowAnalytics />
     </>
   );
 }

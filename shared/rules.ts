@@ -29,6 +29,7 @@ export const ALERT_LABELS: Record<AlertType, string> = {
   credencial_invalida: 'Credencial no válida',
   area_no_permitida: 'Área no permitida',
   fuera_de_area: 'Fuera del campus',
+  red_no_permitida: 'Fuera de la red del campus',
   incidencia: 'Incidencia de registro',
   pase_vencido: 'Pase de invitado vencido',
 };

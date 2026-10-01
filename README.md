@@ -59,18 +59,27 @@ La plataforma tiene **dos portales separados**, cada uno con su propia sesión:
 
 ### Portal de acceso (celular)
 - **Entrada y salida** como acciones separadas, confirmadas con biometría del teléfono.
-- **Geocerca opcional** por acceso: solo se registra estando cerca.
-- Rechaza y **alerta a vigilancia** si la credencial venció, está dada de baja, el rol no puede usar ese acceso o la persona está fuera del área.
+- **Geocerca opcional** por acceso: solo se registra estando cerca y con una ubicación precisa (±100 m o menos).
+- **Red del campus opcional**: el registro puede limitarse al WiFi del campus.
+- Un solo **dispositivo biométrico** por persona, con aviso por correo al vincularlo.
+- Rechaza y **alerta a vigilancia** si la credencial venció, está dada de baja, el rol no puede usar ese acceso o la persona está fuera del área o de la red.
 - Salida sin entrada previa: se registra y queda como **incidencia**. Salida repetida: avisa y no la duplica.
 - Historial personal con filtros y descarga en CSV.
 
 ### Portal institucional
 - **Tablero en vivo** de quién está dentro, con búsqueda y filtro por rol (se actualiza cada 15 s).
+- **Gráficas de afluencia**: hoy hora por hora, día por día (7, 14 o 30 días), por tipo de persona, por acceso e intentos denegados. Cada gráfica se puede ver como tabla.
 - **Pases de invitado** del día, con motivo y anfitrión.
 - **Registro manual** de respaldo cuando el teléfono de la persona no puede registrar.
 - **Alertas** de accesos denegados e incidencias.
 - **Historial** con filtros y exportación a CSV.
-- **Administración** de personas, accesos (roles permitidos y geocerca) y operadores.
+- **Administración** de personas (con resumen gráfico), accesos (roles permitidos y geocerca), operadores y **redes permitidas** (WiFi del campus y computadoras de la caseta).
+
+### Accesibilidad e inclusión
+- Botón **Lectura** en todas las pantallas: tema claro u oscuro, tamaño de texto (normal, grande, muy grande) y animaciones (según el sistema, reducidas o completas).
+- Tipografía **Atkinson Hyperlegible**, diseñada para personas con baja visión.
+- Respeta "reducir movimiento" del sistema, foco visible al navegar con teclado y enlace para **saltar al contenido**.
+- Los estados nunca dependen solo del color (llevan ícono y texto) y las gráficas usan colores probados para daltonismo, con rayado en la segunda serie.
 
 ### Roles
 - Personas: `alumno`, `docente`, `personal`.
@@ -115,6 +124,7 @@ La primera vez, el servidor crea el **administrador inicial** con los datos de `
 | `npm start` | Servidor de producción (API + portales compilados) |
 | `npm run typecheck` | Revisión de tipos con TypeScript |
 | `npm run lint` | Revisión de estilo con oxlint |
+| `npm test` | Pruebas automatizadas de las reglas de acceso (ver [casos de prueba](docs/CASOS_DE_PRUEBA.md)) |
 
 ---
 
@@ -224,12 +234,12 @@ En apego a la *Ley Federal de Protección de Datos Personales en Posesión de lo
 
 Decisiones conscientes y deuda técnica de esta versión:
 
-- **Reportes de afluencia** (historia 10, *Won't*) quedan fuera de este ciclo.
-- La **ubicación la reporta el teléfono**, por lo que puede falsificarse; la geocerca es una barrera, no una garantía.
+- **Reportes de afluencia** (historia 10): hay gráficas en el tablero, pero aún no reportes descargables por periodo para directivos.
+- La **ubicación la reporta el teléfono**, por lo que puede falsificarse; la geocerca es una barrera, no una garantía. Por eso existe la restricción opcional por red del campus.
+- La restricción por red depende de que el servidor vea la IP real: detrás de un proxy hay que configurar `trust proxy` en `server/src/index.ts`.
 - El límite de intentos y los desafíos biométricos viven **en memoria**: se reinician si se reinicia el servidor y no funcionan con varias instancias.
 - Sin integración con torniquetes, lectores de credencial ni el directorio institucional.
 - Es una aplicación web, no una app nativa.
-- Aún no hay pruebas automatizadas. <!-- TODO: actualizar cuando existan -->
 
 ---
 

@@ -43,7 +43,7 @@ export default function Operators() {
         <div className="overflow-x-auto scrollbar-thin">
           <table className="w-full min-w-[820px] text-left text-sm">
             <thead>
-              <tr className="border-b border-stone-200 bg-stone-50 text-[11px] font-semibold tracking-wider text-stone-500 uppercase">
+              <tr className="border-b border-stone-200 bg-stone-50 text-[0.8125rem] font-semibold text-stone-600">
                 <th className="px-5 py-2.5">Operador</th>
                 <th className="px-5 py-2.5">Área</th>
                 <th className="px-5 py-2.5">Rol</th>

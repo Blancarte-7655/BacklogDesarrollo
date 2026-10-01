@@ -4,6 +4,7 @@ import AccessPoints from './pages/AccessPoints';
 import Alerts from './pages/Alerts';
 import Dashboard from './pages/Dashboard';
 import Guests from './pages/Guests';
+import Network from './pages/Network';
 import StaffLogin from './pages/Login';
 import Operators from './pages/Operators';
 import People from './pages/People';
@@ -45,6 +46,14 @@ export default function StaffPortal() {
             element={
               <AdminOnly>
                 <AccessPoints />
+              </AdminOnly>
+            }
+          />
+          <Route
+            path="redes"
+            element={
+              <AdminOnly>
+                <Network />
               </AdminOnly>
             }
           />

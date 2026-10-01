@@ -10,10 +10,10 @@ interface ToastItem {
 }
 
 const STYLES: Record<ToastKind, { icon: ReactNode; bar: string }> = {
-  success: { icon: <CircleCheck className="size-5 shrink-0 text-verde-600" />, bar: 'bg-verde-600' },
-  error: { icon: <CircleX className="size-5 shrink-0 text-red-600" />, bar: 'bg-red-600' },
-  warning: { icon: <CircleAlert className="size-5 shrink-0 text-amber-600" />, bar: 'bg-amber-500' },
-  info: { icon: <Info className="size-5 shrink-0 text-sky-600" />, bar: 'bg-sky-600' },
+  success: { icon: <CircleCheck className="size-5 shrink-0 text-verde-600" />, bar: 'bg-brand' },
+  error: { icon: <CircleX className="size-5 shrink-0 text-red-600" />, bar: 'bg-danger' },
+  warning: { icon: <CircleAlert className="size-5 shrink-0 text-amber-600" />, bar: 'bg-warn' },
+  info: { icon: <Info className="size-5 shrink-0 text-sky-600" />, bar: 'bg-info' },
 };
 
 export function ToastProvider({ children }: { children: ReactNode }) {
@@ -41,7 +41,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.97, transition: { duration: 0.15 } }}
               role="status"
-              className="pointer-events-auto relative flex w-full max-w-sm items-start gap-3 overflow-hidden rounded-lg border border-stone-200 bg-white py-3 pr-4 pl-5 text-sm text-stone-700 shadow-lg"
+              className="pointer-events-auto relative flex w-full max-w-sm items-start gap-3 overflow-hidden rounded-lg border border-stone-200 bg-surface py-3 pr-4 pl-5 text-sm text-stone-700 shadow-lg"
             >
               <span className={`absolute inset-y-0 left-0 w-1 ${STYLES[toast.kind].bar}`} />
               {STYLES[toast.kind].icon}

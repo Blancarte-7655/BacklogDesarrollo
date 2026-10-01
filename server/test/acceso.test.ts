@@ -233,3 +233,44 @@ describe('Dispositivos biométricos', () => {
     await rejectsWith(registrationOptions(person), 409);
   });
 });
+
+/* ---------- Red del campus y afluencia ---------- */
+
+describe('Red del campus', () => {
+  test('con red configurada, un registro desde otra red se rechaza y alerta', async () => {
+    const { saveNetworkSettings } = await import('../src/services/network.ts');
+    saveNetworkSettings({ campusNetworks: ['10.20.0.0/16'], staffNetworks: [] }, '127.0.0.1');
+    try {
+      const person = createPerson();
+      const point = createAccessPoint();
+      await rejectsWith(registerAccess(person, { direction: 'in', accessPointId: point, geo: null, biometric: null, ip: '200.1.2.3' }), 403);
+      assert.equal(alertsOf(person.id, 'red_no_permitida'), 1);
+      const ok = await registerAccess(person, { direction: 'in', accessPointId: point, geo: null, biometric: null, ip: '10.20.5.6' });
+      assert.equal(ok.direction, 'in');
+    } finally {
+      saveNetworkSettings({ campusNetworks: [], staffNetworks: [] }, '127.0.0.1');
+    }
+  });
+
+  test('no se puede guardar una lista del portal que deje fuera a quien la guarda', async () => {
+    const { saveNetworkSettings } = await import('../src/services/network.ts');
+    assert.throws(() => saveNetworkSettings({ campusNetworks: [], staffNetworks: ['10.0.0.0/8'] }, '192.168.0.10'), /dejaría fuera/);
+  });
+});
+
+describe('Afluencia', () => {
+  test('cuenta las entradas de hoy por hora, día, rol y acceso', async () => {
+    const { accessAnalytics } = await import('../src/services/analytics.ts');
+    const before = accessAnalytics(7);
+    const person = createPerson({ role: 'docente' });
+    await access(person, createAccessPoint(), 'in');
+    const after = accessAnalytics(7);
+    const hour = new Date().getHours();
+    assert.equal(after.totalEntries, before.totalEntries + 1);
+    assert.equal(after.hourly[hour].entries, before.hourly[hour].entries + 1);
+    assert.equal(after.daily.length, 7);
+    assert.equal(after.daily.at(-1)!.entries, before.daily.at(-1)!.entries + 1);
+    const docentes = (data: typeof after) => data.byRole.find(item => item.role === 'docente')?.entries ?? 0;
+    assert.equal(docentes(after), docentes(before) + 1);
+  });
+});

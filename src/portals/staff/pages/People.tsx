@@ -9,6 +9,7 @@ import { dateKey, formatDate, relativeTime } from '../../../lib/format';
 import { normalize, onlyDigits } from '../../../lib/text';
 import { Button } from '../../../ui/Button';
 import { ConfirmDialog } from '../../../ui/ConfirmDialog';
+import { BarList } from '../../../ui/charts';
 import { Avatar, Badge, EmptyState, ErrorState, PageHeader, PageLoader, PulseDot, SectionCard } from '../../../ui/Display';
 import { Field, FormError } from '../../../ui/Field';
 import { Modal, ModalBody, ModalFooter } from '../../../ui/Modal';
@@ -70,9 +71,42 @@ export default function People() {
     .filter(person => matches(person, filter))
     .filter(person => !q || normalize(`${person.fullName} ${person.code} ${person.email} ${person.program}`).includes(q));
 
+  const active = list.data.filter(person => person.active);
+  const withBiometrics = active.filter(person => person.biometricDevices > 0).length;
+  const expiringSoon = active.filter(person => {
+    if (!person.credentialExpiresAt) return false;
+    const limit = new Date();
+    limit.setDate(limit.getDate() + 30);
+    return person.credentialExpiresAt <= dateKey(limit);
+  }).length;
+
   return (
     <>
       {header}
+
+      {list.data.length > 0 && (
+        <div className="mb-5 grid gap-5 lg:grid-cols-5">
+          <dl className="grid grid-cols-2 gap-3 lg:col-span-3">
+            <SummaryTile label="Activas" value={active.length} detail={`de ${list.data.length} registradas`} />
+            <SummaryTile label="Dentro ahora" value={active.filter(person => person.inside).length} detail="en el campus" live />
+            <SummaryTile
+              label="Con biometría"
+              value={withBiometrics}
+              detail={active.length ? `${Math.round((withBiometrics / active.length) * 100)} % de las activas` : '—'}
+              progress={active.length ? withBiometrics / active.length : 0}
+            />
+            <SummaryTile label="Vencen en 30 días" value={expiringSoon} detail="credenciales por renovar" warn={expiringSoon > 0} />
+          </dl>
+          <SectionCard className="lg:col-span-2" title="Por tipo de persona" description="Solo personas activas" icon={Users} bodyClassName="p-5">
+            <BarList
+              data={(['alumno', 'docente', 'personal'] as PersonRole[]).map(role => ({ role, count: active.filter(person => person.role === role).length }))}
+              label={item => ({ alumno: 'Alumnos', docente: 'Docentes', personal: 'Personal' })[item.role]}
+              value={item => item.count}
+              caption="Personas activas por tipo"
+            />
+          </SectionCard>
+        </div>
+      )}
 
       <SectionCard title="Registro de personas" icon={Users} description={`${list.data.length} registradas`}>
         <div className="flex flex-col gap-3 border-b border-stone-100 p-4 lg:flex-row lg:items-center lg:justify-between">
@@ -111,7 +145,7 @@ export default function People() {
           <div className="overflow-x-auto scrollbar-thin">
             <table className="w-full min-w-[960px] text-left text-sm">
               <thead>
-                <tr className="border-b border-stone-200 bg-stone-50 text-[11px] font-semibold tracking-wider text-stone-500 uppercase">
+                <tr className="border-b border-stone-200 bg-stone-50 text-[0.8125rem] font-semibold text-stone-600">
                   <th className="px-5 py-2.5">Persona</th>
                   <th className="px-5 py-2.5">Rol</th>
                   <th className="px-5 py-2.5">Carrera o adscripción</th>
@@ -400,4 +434,23 @@ function exportCsv(people: Person[]) {
       person.lastAccessAt ? formatDate(person.lastAccessAt) : 'Sin registros',
     ]),
   ]);
+}
+
+function SummaryTile({ label, value, detail, live, warn, progress }: { label: string; value: number; detail: string; live?: boolean; warn?: boolean; progress?: number }) {
+  return (
+    <div className={`card p-4 ${warn ? 'border-amber-200 bg-amber-50' : ''}`}>
+      <dt className={`flex items-center gap-2 text-sm font-semibold ${warn ? 'text-amber-800' : 'text-stone-600'}`}>
+        {live && <PulseDot />}
+        {warn && <BadgeAlert className="size-4" aria-hidden="true" />}
+        {label}
+      </dt>
+      <dd className="mt-1 font-display text-3xl font-bold text-stone-900 tabular">{value.toLocaleString('es-MX')}</dd>
+      <dd className="text-xs text-stone-500">{detail}</dd>
+      {progress !== undefined && (
+        <dd className="mt-2 h-2 rounded-full bg-stone-100" aria-hidden="true">
+          <span className="block h-full rounded-full" style={{ width: `${Math.round(progress * 100)}%`, background: 'var(--chart-1)' }} />
+        </dd>
+      )}
+    </div>
+  );
 }

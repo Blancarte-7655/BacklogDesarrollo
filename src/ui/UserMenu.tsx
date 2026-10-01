@@ -43,7 +43,7 @@ export function UserMenu({ name, detail, role, links = [], onSignOut }: UserMenu
         <Avatar name={name} size="sm" />
         <span className="hidden max-w-44 text-left leading-tight sm:block">
           <span className="block truncate text-sm font-semibold text-stone-800">{name}</span>
-          {role && <span className="block truncate text-[11px] text-stone-500">{role}</span>}
+          {role && <span className="block truncate text-xs text-stone-500">{role}</span>}
         </span>
         <ChevronDown className={`size-4 text-stone-400 transition ${open ? 'rotate-180' : ''}`} />
       </button>
@@ -55,7 +55,7 @@ export function UserMenu({ name, detail, role, links = [], onSignOut }: UserMenu
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.98 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 z-40 mt-2 w-72 origin-top-right overflow-hidden rounded-xl border border-stone-200 bg-white shadow-xl"
+            className="absolute right-0 z-40 mt-2 w-72 origin-top-right overflow-hidden rounded-xl border border-stone-200 bg-surface shadow-xl"
           >
             <div className="flex items-center gap-3 border-b border-stone-100 px-4 py-3">
               <Avatar name={name} size="md" />

@@ -45,7 +45,7 @@ export function Modal({ open, onClose, title, description, size = 'md', locked =
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          <div className="fixed inset-0 bg-stone-950/45 backdrop-blur-[2px]" onClick={locked ? undefined : onClose} />
+          <div className="fixed inset-0 bg-black/55 backdrop-blur-[2px]" onClick={locked ? undefined : onClose} />
           <motion.div
             role="dialog"
             aria-modal="true"
@@ -54,7 +54,7 @@ export function Modal({ open, onClose, title, description, size = 'md', locked =
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.98 }}
             transition={{ type: 'spring', stiffness: 400, damping: 34 }}
-            className={`relative w-full ${SIZES[size]} max-h-[92dvh] overflow-y-auto rounded-t-2xl border border-stone-200 bg-white shadow-2xl sm:rounded-xl`}
+            className={`relative w-full ${SIZES[size]} max-h-[92dvh] overflow-y-auto rounded-t-2xl border border-stone-200 bg-surface shadow-2xl sm:rounded-xl`}
           >
             <div className="brand-stripe h-1 w-full" />
             <div className="flex items-start justify-between gap-4 border-b border-stone-100 px-6 py-4">

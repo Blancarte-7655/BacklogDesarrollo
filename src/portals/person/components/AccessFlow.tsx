@@ -92,7 +92,7 @@ function AccessFlowBody({ direction, accessPoint, hasBiometrics, onClose, onDone
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: 'spring', stiffness: 260, damping: 15 }}
             className={`mx-auto grid size-20 place-items-center rounded-full text-white ring-8 ${
-              result.incident ? 'bg-amber-500 ring-amber-100' : result.direction === 'in' ? 'bg-verde-600 ring-verde-100' : 'bg-terracota-500 ring-terracota-100'
+              result.incident ? 'bg-warn ring-amber-100' : result.direction === 'in' ? 'bg-brand ring-verde-100' : 'bg-accent ring-terracota-100'
             }`}
           >
             {result.direction === 'in' ? <LogIn className="size-9" /> : <LogOut className="size-9" />}

@@ -32,7 +32,7 @@ El registro se hace **desde el celular de cada persona**, porque no se dispondr�
 | 7 | Alerta de acceso no autorizado | Could | Incluida | Las alertas se generan automáticamente y vigilancia las marca como revisadas |
 | 8 | Historial con filtros y exportación | Should | En el MVP | Historial por fecha, persona, rol y acceso, con exportación a CSV |
 | 9 | Historial personal del alumno | Could | Incluida | Cada persona ve solo sus registros; el servidor lo restringe por sesión |
-| 10 | Reportes de afluencia para directivos | Won't | **Fuera de este ciclo** | No se implementa. Queda en el backlog |
+| 10 | Reportes de afluencia para directivos | Won't | **Parcial** | Gráficas de afluencia en el tablero (por hora, día, rol, acceso y denegados). Los reportes descargables siguen en el backlog |
 
 ## 3. Roles
 
@@ -50,16 +50,19 @@ Los invitados no tienen cuenta: vigilancia los registra con un pase temporal.
 ## 4. Reglas de negocio
 
 1. **Entrada**: se rechaza si la persona está dada de baja, si su credencial está vencida, si su rol
-   no está permitido en ese acceso, si está fuera de la geocerca o si ya tiene una entrada abierta.
+   no está permitido en ese acceso, si está fuera de la red del campus (cuando se configura), si está fuera de
+   la geocerca, si la ubicación es más imprecisa que ±100 m o si ya tiene una entrada abierta.
 2. **Salida**: cierra la entrada abierta. Si no existe, se registra igual y se marca `salida_sin_entrada`.
    Si ya se registró la salida, se avisa y no se duplica.
 3. **Incidencias**: las entradas que quedan abiertas al terminar el día se marcan como `sin_salida`.
 4. **Pases de invitado**: válidos solo el día que se emiten; al día siguiente se rechazan por expirados.
 5. **Bajas**: revocan el acceso y cierran las sesiones abiertas, conservando todo el historial.
 6. Cada intento rechazado genera una **alerta** para vigilancia con el motivo.
+7. **Biometría**: un solo dispositivo por persona. Cambiarlo lo autoriza la administración.
+8. **Portal institucional**: puede limitarse a las IP de las computadoras de vigilancia y administración.
 
 ## 5. Fuera de alcance en este ciclo
 
-- Reportes de afluencia por hora, día y tipo de usuario (historia 10, *Won't*).
+- Reportes descargables de afluencia para directivos (historia 10). Las gráficas del tablero sí están incluidas.
 - Integración con torniquetes, lectores de credencial o el directorio institucional.
 - Aplicación nativa: la primera versión es una aplicación web que funciona en el navegador del celular.

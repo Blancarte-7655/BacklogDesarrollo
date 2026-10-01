@@ -29,7 +29,7 @@ export function Segmented<T extends string>({ id, options, value, onChange }: Se
             {active && (
               <motion.span
                 layoutId={`segmented-${id}`}
-                className="absolute inset-0 rounded-md bg-white shadow-sm ring-1 ring-stone-200"
+                className="absolute inset-0 rounded-md bg-surface shadow-sm ring-1 ring-stone-200"
                 transition={{ type: 'spring', stiffness: 420, damping: 34 }}
               />
             )}

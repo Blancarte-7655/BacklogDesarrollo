@@ -36,6 +36,10 @@ Two separate portals, each with its own session:
 - **Optional geofence** per gate.
 - Denied attempts (expired or revoked ID, role not allowed, outside the area) **alert security**.
 - Check-out without check-in is recorded as an **incident**; duplicate check-outs are rejected.
+- Optional **campus network restriction** for check-ins and an IP allowlist for the institutional portal.
+- One **biometric device** per person, with an email notice when one is linked.
+- **Traffic charts**: today by hour, day by day, by person type, by gate and denied attempts, each also available as a table.
+- **Reading preferences** on every screen: light or dark theme, text size and animations. Body text uses Atkinson Hyperlegible, a typeface designed for low-vision readers.
 - **Live dashboard** of who is on campus, **guest passes**, **manual fallback check-in**, alerts, history with CSV export, and administration of people, gates and operators.
 
 ---
@@ -82,10 +86,10 @@ On first run the server creates the **initial admin** from `.env` and three samp
 
 ## Known limitations
 
-- Traffic reports (user story 10) are out of scope for this cycle.
+- Traffic charts exist, but downloadable reports for management (user story 10) are not built yet.
 - Location is reported by the phone and can be spoofed; the geofence is a deterrent, not a guarantee.
 - Rate limiting and WebAuthn challenges are in memory (reset on restart, single instance only).
-- No automated tests yet.
+- Run `npm test` for the automated tests of the access rules.
 
 ---
 

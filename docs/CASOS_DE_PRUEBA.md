@@ -18,7 +18,8 @@ npm test
 | Archivo | Qué cubre |
 | --- | --- |
 | `server/test/reglas.test.ts` | Distancia entre coordenadas, vigencia de credencial, correo institucional y matrícula |
-| `server/test/acceso.test.ts` | Entrada, salida, duplicados, incidencias, credencial vencida, rol no permitido, geocerca, registro manual y entradas sin salida |
+| `server/test/acceso.test.ts` | Entrada, salida, duplicados, incidencias, credencial vencida, rol no permitido, geocerca, registro manual, entradas sin salida, biometría, red del campus y afluencia |
+| `server/test/red.test.ts` | Rangos de IP permitidos (IPv4, IPv6, localhost) y validación de rangos mal escritos |
 
 ---
 
@@ -44,5 +45,10 @@ npm test
 | CP-14 | 9 | Un alumno con registros | Abre su **historial** | Solo ve sus propios registros | | |
 | CP-15 | 1 | Un acceso con geocerca y `ENFORCE_GEOFENCE=true` | Un alumno registra su entrada **lejos** del acceso | Se rechaza indicando la distancia y vigilancia recibe una alerta | | |
 | CP-16 | 1 | Un celular con HTTPS y biometría vinculada | El alumno registra su entrada | El teléfono pide huella o rostro antes de registrar | | |
+| CP-17 | 1 | La red del campus configurada en **Redes permitidas** | Un alumno registra su entrada con datos móviles | Ve "Conéctate a la red WiFi del campus" y vigilancia recibe una alerta | | |
+| CP-18 | — | Un administrador en **Redes permitidas** | Guarda una lista del portal que no incluye su propia IP | El sistema no la guarda y explica por qué | | |
+| CP-19 | 10 | Registros de varios días | Vigilancia cambia el periodo de las gráficas a 7, 14 y 30 días | Todas las gráficas y el resumen se actualizan; "Ver datos en tabla" muestra los mismos números | | |
+| CP-20 | — | Cualquier pantalla | La persona abre **Lectura** y elige tema oscuro y texto muy grande | Toda la interfaz cambia sin recargar y la preferencia se conserva al volver | | |
+| CP-21 | — | Navegación solo con teclado | La persona presiona Tab al entrar a un portal | Aparece "Saltar al contenido" y el foco siempre es visible | | |
 
 **Resultado:** ✅ pasa · ❌ falla (abrir un *issue* con los pasos) · ⏸️ bloqueado

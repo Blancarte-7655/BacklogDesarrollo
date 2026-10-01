@@ -65,6 +65,7 @@ personRouter.post('/access', async (req, res) => {
     accessPointId: data.accessPointId,
     geo: data.geo,
     biometric: data.biometric as unknown as AuthenticationResponseJSON | null,
+    ip: req.ip,
   });
   res.status(201).json(result);
 });

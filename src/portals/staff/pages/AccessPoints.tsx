@@ -199,7 +199,7 @@ function AccessPointForm({ point, onClose, onSaved }: AccessPointModalProps) {
                   key={role}
                   type="button"
                   onClick={() => toggleRole(role)}
-                  className={`rounded-lg px-3 py-1.5 text-sm font-medium ring-1 transition ${active ? 'bg-verde-600 text-white ring-verde-600' : 'bg-white text-stone-600 ring-stone-200 hover:ring-stone-300'}`}
+                  className={`rounded-lg px-3 py-1.5 text-sm font-medium ring-1 transition ${active ? 'bg-brand text-white ring-brand' : 'bg-surface text-stone-600 ring-stone-200 hover:ring-stone-300'}`}
                 >
                   {PERSON_ROLE_LABELS[role]}
                 </button>

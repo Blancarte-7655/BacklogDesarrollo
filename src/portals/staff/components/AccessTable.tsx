@@ -12,7 +12,7 @@ export function AccessTable({ records, emptyMessage = 'No hay registros.' }: { r
     <div className="overflow-x-auto scrollbar-thin">
       <table className="w-full min-w-[900px] text-left text-sm">
         <thead>
-          <tr className="border-b border-stone-200 bg-stone-50 text-[11px] font-semibold tracking-wider text-stone-500 uppercase">
+          <tr className="border-b border-stone-200 bg-stone-50 text-[0.8125rem] font-semibold text-stone-600">
             <th className="px-5 py-2.5">Fecha</th>
             <th className="px-5 py-2.5">Persona</th>
             <th className="px-5 py-2.5">Acceso</th>
