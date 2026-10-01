@@ -1,0 +1,32 @@
+# Revisión automática de cada Pull Request: tipos, estilo y pruebas
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Revisión de tipos
+        run: npm run typecheck
+
+      - name: Revisión de estilo
+        run: npm run lint
+
+      - name: Pruebas
+        run: npm test
+        env:
+          TZ: America/Mexico_City

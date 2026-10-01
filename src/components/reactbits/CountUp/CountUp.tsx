@@ -1,4 +1,4 @@
-import { useInView, useMotionValue, useSpring } from 'motion/react';
+import { useInView, useMotionValue, useReducedMotion, useSpring } from 'motion/react';
 import { useCallback, useEffect, useRef } from 'react';
 
 interface CountUpProps {
@@ -38,6 +38,7 @@ export default function CountUp({
   });
 
   const isInView = useInView(ref, { once: true, margin: '0px' });
+  const reduceMotion = useReducedMotion();
 
   const getDecimalPlaces = (num: number): number => {
     const str = num.toString();
@@ -81,8 +82,17 @@ export default function CountUp({
         onStart();
       }
 
+      const target = direction === 'down' ? from : to;
+      // Con "reducir movimiento" se muestra el valor final sin contar
+      if (reduceMotion) {
+        springValue.jump(target);
+        if (ref.current) ref.current.textContent = formatValue(target);
+        onEnd?.();
+        return;
+      }
+
       const timeoutId = setTimeout(() => {
-        motionValue.set(direction === 'down' ? from : to);
+        motionValue.set(target);
       }, delay * 1000);
 
       const durationTimeoutId = setTimeout(
@@ -99,7 +109,7 @@ export default function CountUp({
         clearTimeout(durationTimeoutId);
       };
     }
-  }, [isInView, startWhen, motionValue, direction, from, to, delay, onStart, onEnd, duration]);
+  }, [isInView, startWhen, motionValue, springValue, reduceMotion, formatValue, direction, from, to, delay, onStart, onEnd, duration]);
 
   useEffect(() => {
     const unsubscribe = springValue.on('change', (latest: number) => {
