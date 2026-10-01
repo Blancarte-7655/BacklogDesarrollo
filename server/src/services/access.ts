@@ -11,12 +11,13 @@ import type {
   IncidentType,
   PersonRole,
 } from '../../../shared/contracts.ts';
-import { distanceMeters, PERSON_ROLE_LABELS } from '../../../shared/rules.ts';
+import { checkGeofence, PERSON_ROLE_LABELS } from '../../../shared/rules.ts';
 import { config } from '../config.ts';
 import { bool, many, nowIso, one, run } from '../db/index.ts';
 import { badRequest, conflict, forbidden, notFound } from '../lib/http.ts';
 import { dateKey, minutesBetween, todayBounds } from '../lib/dates.ts';
 import { raiseAlert } from './alerts.ts';
+import { campusNetworks, ipAllowed, normalizeIp } from './network.ts';
 import { personCredentialValid, type PersonRow } from './people.ts';
 import { verifyBiometric } from './webauthn.ts';
 
@@ -141,6 +142,8 @@ interface CheckInput {
   accessPointId: string;
   geo: GeoPoint | null;
   biometric: AuthenticationResponseJSON | null;
+  /** IP desde la que llega la solicitud, para la restricción por red del campus */
+  ip?: string;
 }
 
 export async function registerAccess(person: PersonRow, input: CheckInput): Promise<CheckResult> {
@@ -173,11 +176,30 @@ export async function registerAccess(person: PersonRow, input: CheckInput): Prom
     throw forbidden(`Tu rol no tiene permitido el ingreso por ${point.name}.`);
   }
 
-  // 3. Geocerca del acceso
+  // 3. Red del campus (si la administración la configuró)
+  if (!ipAllowed(input.ip, campusNetworks())) {
+    raiseAlert({
+      type: 'red_no_permitida',
+      title: 'Intento de registro fuera de la red del campus',
+      body: `${person.full_name} (${person.code}) intentó registrar acceso en ${point.name} desde la IP ${normalizeIp(input.ip ?? 'desconocida')}, que no pertenece a la red del campus.`,
+      personId: person.id,
+      accessPointId: point.id,
+      dedupeKey: `red_no_permitida:${person.id}:${dateKey(new Date())}`,
+    });
+    throw forbidden('Conéctate a la red WiFi del campus para registrar tu acceso.');
+  }
+
+  // 4. Geocerca del acceso
   if (config.enforceGeofence && point.lat !== null && point.lng !== null) {
     if (!input.geo) throw badRequest('Activa la ubicación para registrar tu acceso.');
-    const distance = distanceMeters(input.geo, { lat: point.lat, lng: point.lng });
-    if (distance > point.radiusMeters + input.geo.accuracy) {
+    const geofence = checkGeofence(input.geo, { lat: point.lat, lng: point.lng, radiusMeters: point.radiusMeters });
+    if (!geofence.ok && geofence.reason === 'imprecisa') {
+      throw badRequest(
+        `Tu ubicación es muy imprecisa (±${input.geo.accuracy} m). Activa la ubicación precisa o sal a un lugar abierto e inténtalo de nuevo.`,
+      );
+    }
+    if (!geofence.ok) {
+      const { distance } = geofence;
       raiseAlert({
         type: 'fuera_de_area',
         title: 'Intento de registro fuera del campus',
@@ -190,7 +212,7 @@ export async function registerAccess(person: PersonRow, input: CheckInput): Prom
     }
   }
 
-  // 4. Identidad confirmada con la biometría del dispositivo
+  // 5. Identidad confirmada con la biometría del dispositivo
   const hasDevices = one<{ count: number }>('SELECT COUNT(*) AS count FROM webauthn_credentials WHERE person_id = ?', person.id)!.count > 0;
   if (config.requireBiometric) {
     if (!hasDevices) {
@@ -204,7 +226,7 @@ export async function registerAccess(person: PersonRow, input: CheckInput): Prom
   const geo = input.geo ? JSON.stringify(input.geo) : null;
   const open = findOpenRecord(person.id);
 
-  // 5. Entrada
+  // 6. Entrada
   if (input.direction === 'in') {
     if (open) throw conflict(`Ya tienes una entrada registrada por ${open.access_point_name} desde las ${open.check_in?.slice(11, 16)}.`);
     const id = randomUUID();
@@ -226,7 +248,7 @@ export async function registerAccess(person: PersonRow, input: CheckInput): Prom
     };
   }
 
-  // 6. Salida
+  // 7. Salida
   if (open) {
     run('UPDATE access_records SET check_out = ?, geo = COALESCE(geo, ?), biometric = ?, updated_at = ? WHERE id = ?', timestamp, geo, bool(!!input.biometric), timestamp, open.id);
     return {

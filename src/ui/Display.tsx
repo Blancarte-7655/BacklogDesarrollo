@@ -30,7 +30,7 @@ export function Badge({ tone = 'neutral', icon: Icon, children }: { tone?: Badge
   );
 }
 
-export const PulseDot = ({ className = 'bg-verde-500' }: { className?: string }) => (
+export const PulseDot = ({ className = 'bg-brand-bright' }: { className?: string }) => (
   <span className="relative flex size-2">
     <span className={`absolute inline-flex size-full animate-ping rounded-full opacity-60 ${className}`} />
     <span className={`relative inline-flex size-2 rounded-full ${className}`} />
@@ -50,7 +50,7 @@ const AVATAR_TONES = [
 export function Avatar({ name, size = 'md' }: { name: string; size?: 'sm' | 'md' | 'lg' | 'xl' }) {
   let hash = 0;
   for (const char of name) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
-  const sizes = { sm: 'size-7 text-[10px]', md: 'size-9 text-xs', lg: 'size-12 text-sm', xl: 'size-16 text-lg' };
+  const sizes = { sm: 'size-7 text-xs', md: 'size-9 text-xs', lg: 'size-12 text-sm', xl: 'size-16 text-lg' };
   return (
     <span className={`grid shrink-0 place-items-center rounded-full font-display font-bold ${AVATAR_TONES[hash % AVATAR_TONES.length]} ${sizes[size]}`}>
       {initialsOf(name)}
@@ -72,7 +72,7 @@ export function ProgressBar({ value, size = 'sm', className = '' }: { value: num
       aria-valuemax={100}
     >
       <motion.div
-        className={`h-full rounded-full ${value >= 1 ? 'bg-oliva-500' : 'bg-linear-to-r from-verde-600 to-verde-500'}`}
+        className={`h-full rounded-full ${value >= 1 ? 'bg-leaf' : 'bg-linear-to-r from-brand to-brand-bright'}`}
         initial={{ width: 0 }}
         animate={{ width: `${percent}%` }}
         transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
@@ -137,12 +137,12 @@ export function StatCard({ icon: Icon, label, value, suffix, hint, tone = 'verde
   return (
     <SpotlightCard className="p-5" spotlightColor="rgba(30, 107, 58, 0.07)">
       <div className="flex items-start justify-between gap-3">
-        <p className="text-[13px] font-medium text-stone-500">{label}</p>
+        <p className="text-[0.8125rem] font-medium text-stone-500">{label}</p>
         <span className={`grid size-9 place-items-center rounded-lg ${STAT_TONES[tone]}`}>
           <Icon className="size-[18px]" />
         </span>
       </div>
-      <p className="mt-2 font-display text-[28px] leading-tight font-bold text-stone-900">
+      <p className="mt-2 font-display text-[1.75rem] leading-tight font-bold text-stone-900">
         <CountUp to={value} duration={1.1} separator="," />
         {suffix && <span className="ml-1 text-base font-semibold text-stone-400">{suffix}</span>}
       </p>
@@ -173,7 +173,7 @@ export function SectionCard({ title, description, icon: Icon, action, className 
               </span>
             )}
             <div className="min-w-0">
-              <h2 className="truncate font-display text-[15px] font-bold text-stone-900">{title}</h2>
+              <h2 className="truncate font-display text-[0.9375rem] font-bold text-stone-900">{title}</h2>
               {description && <p className="truncate text-xs text-stone-500">{description}</p>}
             </div>
           </div>
@@ -199,7 +199,7 @@ export function PageHeader({ eyebrow, title, description, actions }: { eyebrow?:
           animateBy="words"
           animationFrom={{ filter: 'blur(6px)', opacity: 0, y: -8 }}
           animationTo={[{ filter: 'blur(0px)', opacity: 1, y: 0 }]}
-          className="mt-1 font-display text-2xl font-extrabold tracking-tight text-stone-900 sm:text-[28px]"
+          className="mt-1 font-display text-2xl font-extrabold tracking-tight text-stone-900 sm:text-[1.75rem]"
         />
         {description && <div className="mt-1 text-sm text-stone-500">{description}</div>}
       </div>
@@ -216,7 +216,7 @@ export function FullPageLoader({ label = 'Cargando…' }: { label?: string }) {
       <div className="flex flex-col items-center gap-5">
         <Wordmark size="md" subtitle />
         <div className="h-1 w-44 overflow-hidden rounded-full bg-stone-200">
-          <div className="h-full w-1/3 animate-loader rounded-full bg-verde-600" />
+          <div className="h-full w-1/3 animate-loader rounded-full bg-brand" />
         </div>
         <p className="text-xs text-stone-500">{label}</p>
       </div>

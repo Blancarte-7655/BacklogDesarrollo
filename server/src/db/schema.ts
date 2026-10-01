@@ -118,6 +118,13 @@ CREATE TABLE IF NOT EXISTS webauthn_credentials (
   last_used_at  TEXT
 );
 
+-- Configuración del sistema (por ejemplo, redes permitidas)
+CREATE TABLE IF NOT EXISTS settings (
+  key         TEXT PRIMARY KEY,
+  value       TEXT NOT NULL,
+  updated_at  TEXT NOT NULL DEFAULT ${NOW}
+);
+
 CREATE TABLE IF NOT EXISTS audit_log (
   id          TEXT PRIMARY KEY,
   actor_type  TEXT NOT NULL,

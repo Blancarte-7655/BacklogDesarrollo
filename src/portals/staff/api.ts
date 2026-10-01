@@ -1,4 +1,5 @@
 import type {
+  AccessAnalytics,
   AccessPoint,
   AccessPointInput,
   AccessRecord,
@@ -10,6 +11,7 @@ import type {
   GuestPass,
   GuestPassInput,
   MailResult,
+  NetworkSettings,
   ManualRecordInput,
   Person,
   PersonInput,
@@ -45,6 +47,9 @@ const query = (params: object) => {
 
 export const staffApi = {
   dashboard: () => api<SecurityDashboard>('/staff/dashboard'),
+  analytics: (days: number) => api<AccessAnalytics>(`/staff/analytics?days=${days}`),
+  network: () => api<NetworkSettings>('/staff/network'),
+  saveNetwork: (body: { campusNetworks: string[]; staffNetworks: string[] }) => api<NetworkSettings>('/staff/network', { method: 'PUT', body }),
   stats: () => api<AdminDashboard>('/staff/stats'),
   meta: () => api<AdminMeta>('/staff/meta'),
 

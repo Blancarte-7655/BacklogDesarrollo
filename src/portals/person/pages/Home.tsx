@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { AccessDirection, AccessPoint } from '../../../../shared/contracts';
 import { PERSON_ROLE_LABELS } from '../../../../shared/rules';
+import { Ambient } from '../../../brand/Ambient';
 import BlurText from '../../../components/reactbits/BlurText/BlurText';
 import ClickSpark from '../../../components/reactbits/ClickSpark/ClickSpark';
 import Counter from '../../../components/reactbits/Counter/Counter';
@@ -96,9 +97,12 @@ export default function PersonHome() {
 
       <ClickSpark sparkColor={data.inside ? '#ffffff' : '#1e6b3a'} sparkRadius={24} sparkCount={10}>
         {data.inside && openRecord ? (
-          <section className="brand-hero relative overflow-hidden rounded-2xl p-6 text-white shadow-lg shadow-verde-900/20 sm:p-7">
+          <section className="brand-hero relative isolate overflow-hidden rounded-2xl p-6 text-white shadow-lg shadow-brand-strong/20 sm:p-7">
+            <div className="absolute inset-0 -z-10">
+              <Ambient />
+            </div>
             <p className="eyebrow flex items-center gap-2 text-white/90">
-              <PulseDot className="bg-oliva-300" />
+              <PulseDot className="bg-leaf" />
               Dentro del campus
             </p>
             <p className="mt-1 text-sm text-white/80">
@@ -113,20 +117,23 @@ export default function PersonHome() {
             </div>
             <p className="text-xs text-white/70">Tiempo dentro del campus (horas y minutos)</p>
 
-            <Button variant="accent" size="lg" className="mt-6 w-full sm:w-auto" icon={<LogOut className="size-5" />} onClick={() => start('out')}>
+            <Button variant="accent" size="lg" className="mt-6 h-14 w-full text-base sm:w-auto" icon={<LogOut className="size-5" />} onClick={() => start('out')}>
               Registrar salida
             </Button>
           </section>
         ) : (
           <section className="card relative overflow-hidden p-6 sm:p-7">
-            <span className="absolute inset-y-0 left-0 w-1.5 bg-verde-600" />
+            <span className="absolute inset-y-0 left-0 w-1.5 bg-brand" />
             <p className="eyebrow text-verde-700">Registro de acceso</p>
             <h2 className="mt-1 font-display text-2xl font-extrabold text-stone-900">Registrar entrada</h2>
             <p className="mt-2 text-sm text-stone-600">Elige el acceso por el que vas a ingresar y confirma con tu biometría.</p>
 
             {allowed.length ? (
               <>
-                <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                <p id="elige-acceso" className="mt-5 text-sm font-semibold text-stone-700">
+                  Acceso
+                </p>
+                <div role="group" aria-labelledby="elige-acceso" className="mt-2 grid gap-3 sm:grid-cols-2">
                   {allowed.map(point => {
                     const active = currentPoint?.id === point.id;
                     return (
@@ -134,7 +141,8 @@ export default function PersonHome() {
                         key={point.id}
                         type="button"
                         onClick={() => setSelectedPoint(point.id)}
-                        className={`rounded-xl border p-4 text-left transition ${active ? 'border-verde-600 bg-verde-50/60 ring-2 ring-verde-600/20' : 'border-stone-200 hover:border-stone-300'}`}
+                        aria-pressed={active}
+                        className={`min-h-16 rounded-xl border p-4 text-left transition ${active ? 'border-brand bg-verde-50/60 ring-2 ring-brand/20' : 'border-stone-200 hover:border-stone-300'}`}
                       >
                         <span className="flex items-center gap-2 font-semibold text-stone-900">
                           <DoorOpen className={`size-4 ${active ? 'text-verde-700' : 'text-stone-400'}`} />
@@ -142,7 +150,7 @@ export default function PersonHome() {
                         </span>
                         <span className="mt-1 block text-xs text-stone-500">{point.description || 'Acceso del campus'}</span>
                         {point.lat !== null && (
-                          <span className="mt-1.5 inline-flex items-center gap-1 text-[11px] text-stone-400">
+                          <span className="mt-1.5 inline-flex items-center gap-1 text-xs text-stone-400">
                             <MapPin className="size-3" />
                             Valida ubicación ({point.radiusMeters} m)
                           </span>
@@ -154,7 +162,7 @@ export default function PersonHome() {
                 <Button
                   variant="primary"
                   size="lg"
-                  className="mt-6 w-full sm:w-auto"
+                  className="mt-6 h-14 w-full text-base sm:w-auto"
                   icon={<LogIn className="size-5" />}
                   disabled={!data.credentialValid}
                   onClick={() => start('in')}

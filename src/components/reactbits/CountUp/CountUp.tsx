@@ -1,4 +1,5 @@
-import { useInView, useMotionValue, useReducedMotion, useSpring } from 'motion/react';
+import { useInView, useMotionValue, useSpring } from 'motion/react';
+import { useReduceMotion } from '../../../hooks/useReduceMotion';
 import { useCallback, useEffect, useRef } from 'react';
 
 interface CountUpProps {
@@ -38,7 +39,7 @@ export default function CountUp({
   });
 
   const isInView = useInView(ref, { once: true, margin: '0px' });
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useReduceMotion();
 
   const getDecimalPlaces = (num: number): number => {
     const str = num.toString();

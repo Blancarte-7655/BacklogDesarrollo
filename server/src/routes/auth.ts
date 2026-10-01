@@ -6,6 +6,8 @@ import { forbidden, parse, unauthorized } from '../lib/http.ts';
 import { verifyPassword } from '../lib/passwords.ts';
 import { clearRateLimit, hitRateLimit, MINUTE } from '../lib/rateLimit.ts';
 import { endSession, startSession } from '../lib/sessions.ts';
+import { STAFF_NETWORK_MESSAGE } from '../middleware/auth.ts';
+import { ipAllowed, staffNetworks } from '../services/network.ts';
 import { audit } from '../services/audit.ts';
 import { personCredentialValid, type PersonRow } from '../services/people.ts';
 import { toStaffProfile, type StaffRow } from '../services/staff.ts';
@@ -28,6 +30,7 @@ const personLoginSchema = z.object({
 
 authRouter.post('/staff/login', async (req, res) => {
   const { email, password } = parse(staffLoginSchema, req.body);
+  if (!ipAllowed(req.ip, staffNetworks())) throw forbidden(STAFF_NETWORK_MESSAGE);
   const limiterKey = `staff-login:${req.ip}:${email}`;
   hitRateLimit(limiterKey, 5, 15 * MINUTE);
 

@@ -35,7 +35,7 @@ export default function Landing() {
         <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 pt-8 pb-20 sm:px-8 lg:grid-cols-[1.15fr_1fr] lg:pt-14 lg:pb-28">
           <div className="text-white">
             <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold tracking-wide ring-1 ring-white/25 backdrop-blur">
-              <span className="size-1.5 rounded-full bg-oliva-300" />
+              <span className="size-1.5 rounded-full bg-leaf" />
               Control de acceso universitario
             </span>
             <BlurText
@@ -50,7 +50,7 @@ export default function Landing() {
               <span className="text-white/85">Entra al campus y</span>
               <RotatingText
                 texts={['registra tu entrada', 'confirma tu identidad', 'evita las filas', 'deja constancia']}
-                mainClassName="overflow-hidden rounded-lg bg-white px-3 py-1 text-verde-700 shadow-lg shadow-black/10"
+                mainClassName="overflow-hidden rounded-lg bg-surface px-3 py-1 text-verde-700 shadow-lg shadow-black/10"
                 splitLevelClassName="overflow-hidden pb-0.5"
                 staggerFrom="last"
                 staggerDuration={0.018}
@@ -98,7 +98,7 @@ export default function Landing() {
               <span className="grid size-10 place-items-center rounded-lg bg-verde-50 text-verde-700">
                 <Icon className="size-5" />
               </span>
-              <h3 className="mt-4 font-display text-[15px] font-bold text-stone-900">{title}</h3>
+              <h3 className="mt-4 font-display text-[0.9375rem] font-bold text-stone-900">{title}</h3>
               <p className="mt-1.5 text-sm leading-relaxed text-stone-500">{text}</p>
             </AnimatedContent>
           ))}
@@ -131,7 +131,7 @@ function PortalCard({ to, icon: Icon, eyebrow, title, description, cta, accent }
       <GlareHover
         width="100%"
         height="auto"
-        background="#ffffff"
+        background="var(--color-surface)"
         borderRadius="16px"
         borderColor="transparent"
         glareColor={verde ? '#8cc63f' : '#c9692f'}
@@ -141,7 +141,7 @@ function PortalCard({ to, icon: Icon, eyebrow, title, description, cta, accent }
         className="shadow-2xl shadow-black/20 transition duration-300 group-hover:-translate-y-1"
       >
         <div className="flex w-full gap-5 p-6 text-left">
-          <span className={`grid size-14 shrink-0 place-items-center rounded-xl text-white ${verde ? 'bg-verde-600' : 'bg-terracota-500'}`}>
+          <span className={`grid size-14 shrink-0 place-items-center rounded-xl text-white ${verde ? 'bg-brand' : 'bg-accent'}`}>
             <Icon className="size-7" />
           </span>
           <div className="min-w-0">

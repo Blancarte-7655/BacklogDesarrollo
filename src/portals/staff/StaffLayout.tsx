@@ -1,10 +1,12 @@
-import { Bell, ClipboardList, DoorOpen, LayoutDashboard, Mail, MailWarning, Menu, ShieldCheck, UserRoundPlus, Users, UsersRound, X, type LucideIcon } from 'lucide-react';
+import { Bell, ClipboardList, DoorOpen, LayoutDashboard, Mail, MailWarning, Menu, ShieldCheck, UserRoundPlus, Users, UsersRound, Wifi, X, type LucideIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Ambient } from '../../brand/Ambient';
 import { Wordmark } from '../../brand/Logo';
 import { useAsync } from '../../hooks/useAsync';
 import { STAFF_ROLE_LABELS } from '../../../shared/rules';
+import { ReadingPreferences } from '../../ui/ReadingPreferences';
 import { UserMenu } from '../../ui/UserMenu';
 import { staffApi } from './api';
 import type { StaffOutletContext } from './context';
@@ -50,6 +52,7 @@ export default function StaffLayout() {
               { to: '/control/personas', label: 'Personas', icon: Users },
               { to: '/control/accesos', label: 'Accesos', icon: DoorOpen },
               { to: '/control/operadores', label: 'Operadores', icon: ShieldCheck },
+              { to: '/control/redes', label: 'Redes permitidas', icon: Wifi },
             ],
           },
         ]
@@ -66,20 +69,23 @@ export default function StaffLayout() {
 
   const sidebar = (
     <div className="flex h-full flex-col">
-      <div className="brand-hero-admin px-5 pt-5 pb-4 text-white">
+      <div className="brand-hero-admin relative isolate overflow-hidden px-5 pt-5 pb-4 text-white">
+        <div className="absolute inset-0 -z-10">
+          <Ambient />
+        </div>
         <Link to="/control" onClick={() => setDrawerOpen(false)}>
           <Wordmark size="md" tone="white" subtitle />
         </Link>
-        <p className="mt-3 inline-flex items-center gap-1.5 rounded-md bg-white/15 px-2 py-1 text-[11px] font-semibold tracking-wide ring-1 ring-white/20">
+        <p className="mt-3 inline-flex items-center gap-1.5 rounded-md bg-white/15 px-2 py-1 text-xs font-semibold tracking-wide ring-1 ring-white/20">
           <ShieldCheck className="size-3.5" />
           UniAccess · Portal institucional
         </p>
       </div>
 
-      <nav className="flex-1 space-y-5 overflow-y-auto px-3 py-5 scrollbar-thin">
+      <nav aria-label="Secciones del portal" className="flex-1 space-y-5 overflow-y-auto px-3 py-5 scrollbar-thin">
         {groups.map(group => (
           <div key={group.title}>
-            <p className="px-3 pb-1.5 text-[10px] font-bold tracking-[0.16em] text-stone-400 uppercase">{group.title}</p>
+            <p className="px-3 pb-1.5 text-xs font-semibold text-stone-500">{group.title}</p>
             <div className="space-y-0.5">
               {group.items.map(item => (
                 <NavLink
@@ -100,11 +106,11 @@ export default function StaffLayout() {
                           transition={{ type: 'spring', stiffness: 420, damping: 36 }}
                         />
                       )}
-                      {isActive && <span className="absolute inset-y-2 left-0 w-1 rounded-full bg-verde-600" />}
+                      {isActive && <span className="absolute inset-y-2 left-0 w-1 rounded-full bg-brand" />}
                       <item.icon className={`relative size-[18px] ${isActive ? 'text-verde-700' : 'text-stone-400'}`} />
                       <span className="relative flex-1">{item.label}</span>
                       {!!item.badge && (
-                        <span className="relative rounded-full bg-terracota-500 px-1.5 py-0.5 text-[10px] leading-none font-bold text-white">{item.badge}</span>
+                        <span className="relative rounded-full bg-accent px-1.5 py-0.5 text-xs leading-none font-bold text-white">{item.badge}</span>
                       )}
                     </>
                   )}
@@ -138,18 +144,21 @@ export default function StaffLayout() {
 
   return (
     <div className="min-h-dvh bg-page">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-68 border-r border-stone-200 bg-white lg:block">{sidebar}</aside>
+      <a href="#contenido" className="skip-link">
+        Saltar al contenido
+      </a>
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-68 border-r border-stone-200 bg-surface lg:block">{sidebar}</aside>
 
       <AnimatePresence>
         {drawerOpen && (
           <motion.div className="fixed inset-0 z-50 lg:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <div className="absolute inset-0 bg-stone-950/40" onClick={() => setDrawerOpen(false)} />
+            <div className="absolute inset-0 bg-black/55" onClick={() => setDrawerOpen(false)} />
             <motion.aside
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', stiffness: 380, damping: 38 }}
-              className="relative h-full w-72 bg-white shadow-2xl"
+              className="relative h-full w-72 bg-surface shadow-2xl"
             >
               <button
                 type="button"
@@ -166,7 +175,7 @@ export default function StaffLayout() {
       </AnimatePresence>
 
       <div className="lg:pl-68">
-        <header className="sticky top-0 z-20 border-b border-stone-200 bg-white/95 backdrop-blur">
+        <header className="sticky top-0 z-20 border-b border-stone-200 bg-surface/95 backdrop-blur">
           <div className="flex h-16 items-center justify-between gap-3 px-4 sm:px-8">
             <div className="flex items-center gap-3">
               <button type="button" onClick={() => setDrawerOpen(true)} className="rounded-lg p-2 text-stone-600 hover:bg-stone-100 lg:hidden" aria-label="Abrir menú">
@@ -179,6 +188,8 @@ export default function StaffLayout() {
                 <span className="font-semibold text-stone-800">Control de acceso</span> · Centro Universitario de Tlaquepaque
               </p>
             </div>
+            <div className="flex items-center gap-2">
+            <ReadingPreferences />
             <UserMenu
               name={staff.fullName}
               role={STAFF_ROLE_LABELS[staff.role]}
@@ -186,10 +197,11 @@ export default function StaffLayout() {
               links={staff.role === 'admin' ? [{ to: '/control/operadores', label: 'Operadores', icon: ShieldCheck }] : []}
               onSignOut={handleSignOut}
             />
+            </div>
           </div>
         </header>
 
-        <main className="mx-auto max-w-7xl px-4 py-6 sm:px-8 lg:py-8">
+        <main id="contenido" tabIndex={-1} className="mx-auto max-w-7xl outline-none px-4 py-6 sm:px-8 lg:py-8">
           <motion.div key={location.pathname} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
             <Outlet context={context} />
           </motion.div>

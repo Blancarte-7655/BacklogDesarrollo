@@ -3,6 +3,7 @@ import type { StaffProfile } from '../../../shared/contracts.ts';
 import { one } from '../db/index.ts';
 import { forbidden, unauthorized } from '../lib/http.ts';
 import { readCookie, resolveSession, SESSION_COOKIES } from '../lib/sessions.ts';
+import { ipAllowed, staffNetworks } from '../services/network.ts';
 import type { PersonRow } from '../services/people.ts';
 import { toStaffProfile, type StaffRow } from '../services/staff.ts';
 
@@ -16,8 +17,11 @@ declare global {
   }
 }
 
+export const STAFF_NETWORK_MESSAGE = 'El portal institucional solo abre desde las computadoras autorizadas de vigilancia y administración.';
+
 /** Vigilancia o administración */
 export const requireStaff: RequestHandler = (req, _res, next) => {
+  if (!ipAllowed(req.ip, staffNetworks())) throw forbidden(STAFF_NETWORK_MESSAGE);
   const token = readCookie(req, SESSION_COOKIES.staff);
   const staffId = token ? resolveSession('staff', token) : null;
   const row = staffId ? one<StaffRow>('SELECT * FROM staff WHERE id = ? AND active = 1', staffId) : undefined;

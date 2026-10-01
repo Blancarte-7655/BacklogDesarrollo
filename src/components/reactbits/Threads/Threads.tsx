@@ -1,5 +1,5 @@
-import { useReducedMotion } from 'motion/react';
 import React, { useEffect, useRef } from 'react';
+import { useReduceMotion } from '../../../hooks/useReduceMotion';
 import { Renderer, Program, Mesh, Triangle, Color } from 'ogl';
 
 interface ThreadsProps {
@@ -139,7 +139,7 @@ const Threads: React.FC<ThreadsProps> = ({
   // Keep the latest props in a ref so updating them mutates the live shader
   // uniforms instead of tearing down and rebuilding the whole WebGL context.
   // Con "reducir movimiento" activo se dibuja un solo cuadro fijo en lugar de animar
-  const reduceMotion = useReducedMotion() ?? false;
+  const reduceMotion = useReduceMotion();
   const propsRef = useRef({ color, amplitude, distance, enableMouseInteraction, reduceMotion });
   propsRef.current = { color, amplitude, distance, enableMouseInteraction, reduceMotion };
 

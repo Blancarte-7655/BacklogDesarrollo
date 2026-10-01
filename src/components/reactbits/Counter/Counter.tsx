@@ -1,4 +1,5 @@
-import { MotionValue, motion, useReducedMotion, useSpring, useTransform } from 'motion/react';
+import { MotionValue, motion, useSpring, useTransform } from 'motion/react';
+import { useReduceMotion } from '../../../hooks/useReduceMotion';
 import type React from 'react';
 import { useEffect } from 'react';
 
@@ -70,7 +71,7 @@ function Digit({ place, value, height, digitStyle }: DigitProps) {
 function NumericDigit({ place, value, height, digitStyle }: Omit<DigitProps, 'place'> & { place: number }) {
   const valueRoundedToPlace = getValueRoundedToPlace(value, place);
   const animatedValue = useSpring(valueRoundedToPlace);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useReduceMotion();
 
   useEffect(() => {
     // Con "reducir movimiento" el dígito cambia sin girar

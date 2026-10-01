@@ -1,4 +1,4 @@
-import { BadgeAlert, Bell, CheckCheck, Circle, DoorClosed, MapPinOff, ShieldAlert, TriangleAlert, type LucideIcon } from 'lucide-react';
+import { BadgeAlert, Bell, CheckCheck, Circle, DoorClosed, MapPinOff, ShieldAlert, TriangleAlert, WifiOff, type LucideIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useMemo, useState } from 'react';
 import type { Alert, AlertType } from '../../../../shared/contracts';
@@ -17,6 +17,7 @@ const STYLES: Record<AlertType, { icon: LucideIcon; tone: string }> = {
   credencial_invalida: { icon: ShieldAlert, tone: 'bg-red-50 text-red-600' },
   area_no_permitida: { icon: DoorClosed, tone: 'bg-terracota-50 text-terracota-600' },
   fuera_de_area: { icon: MapPinOff, tone: 'bg-amber-50 text-amber-700' },
+  red_no_permitida: { icon: WifiOff, tone: 'bg-amber-50 text-amber-700' },
   incidencia: { icon: TriangleAlert, tone: 'bg-amber-50 text-amber-700' },
   pase_vencido: { icon: BadgeAlert, tone: 'bg-stone-100 text-stone-600' },
 };
@@ -126,7 +127,7 @@ export default function Alerts() {
                         </span>
                         <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap items-center gap-2">
-                            {!alert.readAt && <Circle className="size-2 fill-terracota-500 text-terracota-500" />}
+                            {!alert.readAt && <Circle className="size-2 fill-accent text-terracota-500" />}
                             <p className="font-semibold text-stone-900">{alert.title}</p>
                             <Badge>{ALERT_LABELS[alert.type]}</Badge>
                             <span className="text-xs text-stone-400">{formatTime(alert.createdAt)}</span>
@@ -161,7 +162,7 @@ function Chip({ active, label, onClick }: { active: boolean; label: string; onCl
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-full px-3 py-1 text-xs font-medium ring-1 transition ${active ? 'bg-verde-600 text-white ring-verde-600' : 'bg-white text-stone-600 ring-stone-200 hover:ring-stone-300'}`}
+      className={`rounded-full px-3 py-1 text-xs font-medium ring-1 transition ${active ? 'bg-brand text-white ring-brand' : 'bg-surface text-stone-600 ring-stone-200 hover:ring-stone-300'}`}
     >
       {label}
     </button>

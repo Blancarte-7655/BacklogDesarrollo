@@ -5,17 +5,17 @@ export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'acce
 type Size = 'sm' | 'md' | 'lg';
 
 const VARIANTS: Record<ButtonVariant, string> = {
-  primary: 'bg-verde-600 text-white shadow-sm shadow-verde-900/15 hover:bg-verde-700 focus-visible:ring-verde-600/30',
-  secondary: 'border border-stone-300 bg-white text-stone-700 shadow-sm hover:border-stone-400 hover:bg-stone-50 focus-visible:ring-stone-400/30',
+  primary: 'bg-brand text-white shadow-sm shadow-brand-strong/15 hover:bg-brand-strong focus-visible:ring-brand/30',
+  secondary: 'border border-stone-300 bg-surface text-stone-700 shadow-sm hover:border-stone-400 hover:bg-stone-50 focus-visible:ring-stone-400/30',
   ghost: 'text-stone-600 hover:bg-stone-100 hover:text-stone-900 focus-visible:ring-stone-400/30',
-  danger: 'border border-red-200 bg-white text-red-700 hover:bg-red-50 focus-visible:ring-red-500/25',
-  accent: 'bg-terracota-500 text-white shadow-sm shadow-terracota-900/15 hover:bg-terracota-600 focus-visible:ring-terracota-500/30',
+  danger: 'border border-red-200 bg-surface text-red-700 hover:bg-red-50 focus-visible:ring-danger/25',
+  accent: 'bg-accent text-white shadow-sm shadow-accent-strong/15 hover:bg-accent-strong focus-visible:ring-accent/30',
 };
 
 const SIZES: Record<Size, string> = {
   sm: 'h-8 gap-1.5 rounded-md px-3 text-xs',
   md: 'h-10 gap-2 rounded-lg px-4 text-sm',
-  lg: 'h-12 gap-2 rounded-lg px-6 text-[15px]',
+  lg: 'h-12 gap-2 rounded-lg px-6 text-[0.9375rem]',
 };
 
 /** Clases de botón reutilizables también en <Link> */

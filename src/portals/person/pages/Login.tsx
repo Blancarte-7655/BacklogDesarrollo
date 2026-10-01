@@ -50,7 +50,7 @@ export default function PersonLogin() {
     >
       <div className="p-7 sm:p-8">
         <div className="flex items-center gap-3">
-          <span className="grid size-11 place-items-center rounded-xl bg-verde-600 text-white">
+          <span className="grid size-11 place-items-center rounded-xl bg-brand text-white">
             <UserRoundCheck className="size-6" />
           </span>
           <div>

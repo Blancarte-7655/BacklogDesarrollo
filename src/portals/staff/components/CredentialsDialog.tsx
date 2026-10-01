@@ -89,7 +89,7 @@ function Body({ kind, mode, recipient, password, onClose }: CredentialsDialogPro
             Contraseña de acceso
           </p>
           <div className="mt-3 flex flex-wrap items-center gap-3">
-            <code className="rounded-lg border border-verde-200 bg-white px-4 py-2.5 font-mono text-xl font-semibold tracking-[0.12em] text-stone-900 select-all">
+            <code className="rounded-lg border border-verde-200 bg-surface px-4 py-2.5 font-mono text-xl font-semibold tracking-[0.12em] text-stone-900 select-all">
               {password}
             </code>
             <Button
@@ -124,7 +124,7 @@ function Body({ kind, mode, recipient, password, onClose }: CredentialsDialogPro
             </Field>
           </div>
           <Field label="Mensaje" hint="Puedes ajustar el texto antes de enviarlo.">
-            <textarea className="input min-h-64 font-mono text-[13px] leading-relaxed" value={body} onChange={event => setBody(event.target.value)} />
+            <textarea className="input min-h-64 font-mono text-[0.8125rem] leading-relaxed" value={body} onChange={event => setBody(event.target.value)} />
           </Field>
           {meta && !meta.smtpConfigured && (
             <p className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">

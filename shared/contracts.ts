@@ -13,7 +13,7 @@ export type AccessDirection = 'in' | 'out';
 export type AccessSource = 'app' | 'manual';
 export type AccessStatus = 'ok' | 'incidencia';
 export type IncidentType = 'salida_sin_entrada' | 'sin_salida';
-export type AlertType = 'credencial_invalida' | 'area_no_permitida' | 'fuera_de_area' | 'incidencia' | 'pase_vencido';
+export type AlertType = 'credencial_invalida' | 'area_no_permitida' | 'fuera_de_area' | 'red_no_permitida' | 'incidencia' | 'pase_vencido';
 export type GuestPassStatus = 'activo' | 'cerrado' | 'expirado';
 
 export interface GeoPoint {
@@ -239,6 +239,33 @@ export interface SecurityDashboard {
   unreadAlerts: number;
   activeGuestPasses: number;
   recent: AccessEvent[];
+}
+
+/** Afluencia para las gráficas del tablero */
+export interface AccessAnalytics {
+  days: number;
+  /** Entradas y salidas de hoy por hora (0 a 23) */
+  hourly: Array<{ hour: number; entries: number; exits: number }>;
+  /** Entradas y salidas por día, del más antiguo al más reciente */
+  daily: Array<{ date: string; entries: number; exits: number }>;
+  byRole: Array<{ role: PersonRole | 'invitado'; entries: number }>;
+  byAccessPoint: Array<{ name: string; entries: number }>;
+  denied: Array<{ type: AlertType; count: number }>;
+  /** Permanencia promedio en minutos de los ciclos cerrados del periodo */
+  averageMinutes: number;
+  /** Hora con más entradas en el periodo, o null si no hay registros */
+  peakHour: number | null;
+  totalEntries: number;
+}
+
+/** Redes desde las que se aceptan registros y el portal institucional */
+export interface NetworkSettings {
+  /** Rangos (CIDR) de la red del campus para registrar entrada y salida. Vacío: cualquier red */
+  campusNetworks: string[];
+  /** Rangos (CIDR) desde los que abre el portal institucional. Vacío: cualquier red */
+  staffNetworks: string[];
+  /** IP con la que el servidor ve esta solicitud */
+  yourIp: string;
 }
 
 /* ---------- Administración ---------- */

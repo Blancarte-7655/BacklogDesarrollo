@@ -7,6 +7,7 @@ import { dayBounds, dateKey, minutesBetween, todayBounds } from '../../lib/dates
 import { parse } from '../../lib/http.ts';
 import { guestPassSchema, manualRecordSchema } from '../../schemas.ts';
 import { openRecordCutoff, RECORDS_SQL, registerManualAccess, toRecord, type AccessRecordRow } from '../../services/access.ts';
+import { accessAnalytics } from '../../services/analytics.ts';
 import { alertSummary, listAlerts, reviewAlert, reviewAllAlerts } from '../../services/alerts.ts';
 import { audit } from '../../services/audit.ts';
 import { closeGuestPass, issueGuestPass, listGuestPasses, reenterGuest } from '../../services/guests.ts';
@@ -103,6 +104,13 @@ operationsRouter.get('/dashboard', (_req, res) => {
     })),
   };
   res.json(dashboard);
+});
+
+/* ---------- Afluencia para las gráficas ---------- */
+
+operationsRouter.get('/analytics', (req, res) => {
+  const { days } = parse(z.object({ days: z.coerce.number().int().min(1).max(90).default(14) }), req.query);
+  res.json(accessAnalytics(days));
 });
 
 /* ---------- Historial y auditoría ---------- */

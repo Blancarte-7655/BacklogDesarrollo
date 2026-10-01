@@ -1,5 +1,5 @@
-import { useReducedMotion } from 'motion/react';
 import React, { useRef, useEffect } from 'react';
+import { useReduceMotion } from '../../../hooks/useReduceMotion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -47,7 +47,7 @@ const AnimatedContent: React.FC<AnimatedContentProps> = ({
   ...props
 }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useReduceMotion();
 
   useEffect(() => {
     const el = ref.current;

@@ -29,11 +29,19 @@ export const ALERT_LABELS: Record<AlertType, string> = {
   credencial_invalida: 'Credencial no válida',
   area_no_permitida: 'Área no permitida',
   fuera_de_area: 'Fuera del campus',
+  red_no_permitida: 'Fuera de la red del campus',
   incidencia: 'Incidencia de registro',
   pase_vencido: 'Pase de invitado vencido',
 };
 
 export const DEFAULT_GEOFENCE_METERS = 300;
+
+/**
+ * Precisión máxima aceptada de la ubicación del teléfono. Con una lectura peor no se puede
+ * saber si la persona está en el acceso, y aceptarla permitiría saltarse la geocerca
+ * enviando una precisión enorme.
+ */
+export const MAX_GEO_ACCURACY_METERS = 100;
 
 /**
  * Dispositivos biométricos por persona. Con uno solo, nadie puede vincular su propia huella
@@ -64,4 +72,17 @@ export function credentialValid(person: { active: boolean; credentialExpiresAt: 
   if (!person.active) return false;
   if (!person.credentialExpiresAt) return true;
   return person.credentialExpiresAt >= dateKey(today);
+}
+
+export type GeofenceResult =
+  | { ok: true; distance: number }
+  | { ok: false; reason: 'imprecisa' | 'lejos'; distance: number };
+
+/** Valida que la ubicación reportada esté dentro de la geocerca del acceso */
+export function checkGeofence(geo: GeoPoint, point: { lat: number; lng: number; radiusMeters: number }): GeofenceResult {
+  const distance = distanceMeters(geo, point);
+  if (geo.accuracy > MAX_GEO_ACCURACY_METERS) return { ok: false, reason: 'imprecisa', distance };
+  // El margen de error del GPS se suma al radio, pero nunca más de MAX_GEO_ACCURACY_METERS
+  if (distance > point.radiusMeters + geo.accuracy) return { ok: false, reason: 'lejos', distance };
+  return { ok: true, distance };
 }

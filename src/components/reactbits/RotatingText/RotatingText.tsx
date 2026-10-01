@@ -1,8 +1,8 @@
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react';
+import { useReduceMotion } from '../../../hooks/useReduceMotion';
 import {
   motion,
   AnimatePresence,
-  useReducedMotion,
   type Transition,
   type VariantLabels,
   type Target,
@@ -70,7 +70,7 @@ const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>(
   ) => {
     const [currentTextIndex, setCurrentTextIndex] = useState<number>(0);
     // Con "reducir movimiento" el texto no rota solo
-    const reduceMotion = useReducedMotion();
+    const reduceMotion = useReduceMotion();
 
     const splitIntoCharacters = (text: string): string[] => {
       if (typeof Intl !== 'undefined' && Intl.Segmenter) {

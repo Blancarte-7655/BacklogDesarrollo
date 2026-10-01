@@ -12,6 +12,7 @@ import { revokeSessions } from '../../lib/sessions.ts';
 import { accessPointSchema, emailSchema, staffSchema } from '../../schemas.ts';
 import { getAccessPoint, listAccessPoints, openRecordCutoff } from '../../services/access.ts';
 import { audit } from '../../services/audit.ts';
+import { getNetworkSettings, saveNetworkSettings } from '../../services/network.ts';
 import { toStaffProfile, type StaffRow } from '../../services/staff.ts';
 
 /** Configuración del sistema: panel, accesos y operadores (solo administración) */
@@ -45,6 +46,24 @@ settingsRouter.get('/stats', (_req, res) => {
     ),
   };
   res.json(stats);
+});
+
+/* ---------- Redes permitidas ---------- */
+
+settingsRouter.get('/network', (req, res) => {
+  res.json(getNetworkSettings(req.ip));
+});
+
+const networkSchema = z.object({
+  campusNetworks: z.array(z.string().max(60)).max(50),
+  staffNetworks: z.array(z.string().max(60)).max(50),
+});
+
+settingsRouter.put('/network', (req, res) => {
+  const data = parse(networkSchema, req.body);
+  const saved = saveNetworkSettings(data, req.ip);
+  audit(actor(req), 'update_networks', 'settings', 'network', saved);
+  res.json(getNetworkSettings(req.ip));
 });
 
 /* ---------- Accesos ---------- */

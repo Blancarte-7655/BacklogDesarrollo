@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, test } from 'node:test';
-import { CODE_RE, credentialValid, distanceMeters, INSTITUTIONAL_EMAIL_RE } from '../../shared/rules.ts';
+import { checkGeofence, CODE_RE, credentialValid, distanceMeters, INSTITUTIONAL_EMAIL_RE, MAX_GEO_ACCURACY_METERS } from '../../shared/rules.ts';
 
 describe('distanceMeters', () => {
   test('la distancia a sí mismo es cero', () => {
@@ -9,6 +9,34 @@ describe('distanceMeters', () => {
 
   test('0.001° de latitud equivale a unos 111 m', () => {
     assert.equal(distanceMeters({ lat: 20.6, lng: -103.3 }, { lat: 20.601, lng: -103.3 }), 111);
+  });
+});
+
+describe('checkGeofence', () => {
+  const gate = { lat: 20.6, lng: -103.3, radiusMeters: 100 };
+
+  test('acepta una ubicación precisa dentro del radio', () => {
+    assert.equal(checkGeofence({ lat: 20.6005, lng: -103.3, accuracy: 15 }, gate).ok, true);
+  });
+
+  test('el margen de error del GPS se suma al radio', () => {
+    // ~111 m del acceso: fuera del radio de 100 m, pero dentro con ±20 m de precisión
+    assert.equal(checkGeofence({ lat: 20.601, lng: -103.3, accuracy: 20 }, gate).ok, true);
+  });
+
+  test('rechaza una ubicación lejana', () => {
+    assert.deepEqual(checkGeofence({ lat: 20.61, lng: -103.3, accuracy: 15 }, gate), { ok: false, reason: 'lejos', distance: 1112 });
+  });
+
+  test('rechaza una precisión enorme aunque prometa cubrir la distancia', () => {
+    // Antes se aceptaba: radio + 100 000 m de "precisión" cubría cualquier distancia
+    const result = checkGeofence({ lat: 21.5, lng: -103.3, accuracy: 100000 }, gate);
+    assert.equal(result.ok, false);
+    assert.equal(!result.ok && result.reason, 'imprecisa');
+  });
+
+  test(`acepta justo el límite de ±${MAX_GEO_ACCURACY_METERS} m`, () => {
+    assert.equal(checkGeofence({ lat: 20.6, lng: -103.3, accuracy: MAX_GEO_ACCURACY_METERS }, gate).ok, true);
   });
 });
 
