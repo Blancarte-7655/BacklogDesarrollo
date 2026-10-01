@@ -11,12 +11,13 @@
 
 Proyecto de la materia **Seminario de Integración: Desarrollo** · 7.º semestre de Ingeniería en Informática.
 
-<!-- TODO: agregar capturas en docs/capturas/ y descomentar
 <p align="center">
-  <img src="docs/capturas/registro-celular.png" alt="Registro de entrada desde el celular con huella" width="260">
-  <img src="docs/capturas/tablero-vigilancia.png" alt="Tablero en vivo del portal de vigilancia" width="560">
+  <img src="docs/capturas/portada.jpg" alt="Portada de UniAccess con los accesos al portal del celular y al portal institucional" width="720">
 </p>
--->
+
+| Tablero con gráficas de afluencia | Modo oscuro |
+| --- | --- |
+| ![Gráfica de entradas y salidas por día y barras por acceso en el portal institucional](docs/capturas/tablero-graficas.jpg) | ![Portada en modo oscuro](docs/capturas/portada-oscuro.jpg) |
 
 ---
 
@@ -32,6 +33,7 @@ Proyecto de la materia **Seminario de Integración: Desarrollo** · 7.º semestr
 - [Privacidad de datos](#privacidad-de-datos)
 - [Limitaciones conocidas](#limitaciones-conocidas)
 - [Producción](#producción)
+- [Documentación del proyecto](#documentación-del-proyecto)
 - [Cómo contribuir](#cómo-contribuir)
 - [Equipo](#equipo)
 - [Licencia](#licencia)
@@ -232,7 +234,8 @@ En apego a la *Ley Federal de Protección de Datos Personales en Posesión de lo
 
 ## Limitaciones conocidas
 
-Decisiones conscientes y deuda técnica de esta versión:
+Decisiones conscientes de esta versión. El detalle, la prioridad y la solución propuesta de cada una
+están en el [registro de deuda técnica](docs/deuda-tecnica.md).
 
 - **Reportes de afluencia** (historia 10): hay gráficas en el tablero, pero aún no reportes descargables por periodo para directivos.
 - La **ubicación la reporta el teléfono**, por lo que puede falsificarse; la geocerca es una barrera, no una garantía. Por eso existe la restricción opcional por red del campus.
@@ -255,6 +258,18 @@ El mismo servidor entrega la API y los portales compilados.
 - **HTTPS es obligatorio**: la biometría y la ubicación solo funcionan en conexiones seguras (o en `localhost`).
 - Configura `APP_ORIGIN` con la URL pública exacta.
 - Respalda `server/data/`, que contiene la base de datos.
+
+---
+
+## Documentación del proyecto
+
+| Documento | Para quién | Qué responde |
+| --- | --- | --- |
+| Este README | Cualquier persona que llega al proyecto | ¿Qué hace y cómo lo instalo? |
+| [docs/ALCANCE.md](docs/ALCANCE.md) | Equipo y docente | ¿Qué historias de usuario cubre y con qué reglas? |
+| [docs/adr/](docs/adr/) | Equipo y quien llegue después | ¿Por qué hicimos esto y no lo otro? |
+| [docs/deuda-tecnica.md](docs/deuda-tecnica.md) | Equipo | ¿Qué atajos tomamos y cómo los vamos a pagar? |
+| [docs/CASOS_DE_PRUEBA.md](docs/CASOS_DE_PRUEBA.md) | Equipo y QA | ¿Cómo comprobamos que funciona? |
 
 ---
 

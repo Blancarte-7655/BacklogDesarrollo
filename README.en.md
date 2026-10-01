@@ -9,6 +9,8 @@
 
 🇲🇽 [Versión en español](README.md)
 
+![UniAccess landing page](docs/capturas/portada.jpg)
+
 Course project for **Integration Seminar: Development** · 7th semester, Computer Engineering.
 
 ---
@@ -101,6 +103,14 @@ npm start
 ```
 
 HTTPS is required for biometrics and geolocation. Set `APP_ORIGIN` to the exact public URL and back up `server/data/`.
+
+---
+
+## Project documentation
+
+- [Architecture Decision Records](docs/adr/) (in Spanish): why we chose WebAuthn, built-in SQLite, two separate portals and the location and network checks.
+- [Technical debt log](docs/deuda-tecnica.md) (in Spanish): known shortcuts, prioritized, with proposed fixes.
+- [Test cases](docs/CASOS_DE_PRUEBA.md) (in Spanish).
 
 ---
 
