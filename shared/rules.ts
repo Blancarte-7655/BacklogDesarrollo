@@ -35,6 +35,13 @@ export const ALERT_LABELS: Record<AlertType, string> = {
 
 export const DEFAULT_GEOFENCE_METERS = 300;
 
+/**
+ * Dispositivos biométricos por persona. Con uno solo, nadie puede vincular su propia huella
+ * a la cuenta de otra persona para registrarle el acceso. Para cambiar de teléfono,
+ * la administración desvincula el anterior.
+ */
+export const MAX_BIOMETRIC_DEVICES = 1;
+
 const pad = (n: number) => String(n).padStart(2, '0');
 
 /** Fecha local YYYY-MM-DD */

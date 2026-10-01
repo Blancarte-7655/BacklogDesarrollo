@@ -1,14 +1,12 @@
 import { browserSupportsWebAuthn, startRegistration } from '@simplewebauthn/browser';
-import { BadgeCheck, Fingerprint, IdCard, KeyRound, Plus, ShieldCheck, Smartphone, Trash2 } from 'lucide-react';
+import { BadgeCheck, Fingerprint, IdCard, KeyRound, Plus, ShieldCheck, Smartphone } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
-import type { BiometricCredential } from '../../../../shared/contracts';
-import { PERSON_ROLE_LABELS } from '../../../../shared/rules';
+import { MAX_BIOMETRIC_DEVICES, PERSON_ROLE_LABELS } from '../../../../shared/rules';
 import { ApiError } from '../../../api/http';
 import { useAsync } from '../../../hooks/useAsync';
 import { deviceLabel } from '../../../lib/geo';
 import { formatDate, relativeTime } from '../../../lib/format';
 import { Button } from '../../../ui/Button';
-import { ConfirmDialog } from '../../../ui/ConfirmDialog';
 import { Avatar, Badge, ErrorState, PageHeader, PageLoader, SectionCard } from '../../../ui/Display';
 import { Field } from '../../../ui/Field';
 import { Modal, ModalBody, ModalFooter } from '../../../ui/Modal';
@@ -83,7 +81,7 @@ function BiometricsCard({ onChange }: { onChange: () => unknown }) {
   const [adding, setAdding] = useState(false);
   const [label, setLabel] = useState(deviceLabel());
   const [busy, setBusy] = useState(false);
-  const [toRemove, setToRemove] = useState<BiometricCredential | null>(null);
+  const canAdd = (data?.length ?? 0) < MAX_BIOMETRIC_DEVICES;
 
   useEffect(() => {
     const check = window.PublicKeyCredential?.isUserVerifyingPlatformAuthenticatorAvailable;
@@ -129,7 +127,8 @@ function BiometricsCard({ onChange }: { onChange: () => unknown }) {
       description="Huella o rostro de tu dispositivo"
       icon={Fingerprint}
       action={
-        supported && (
+        supported &&
+        canAdd && (
           <Button size="sm" variant="primary" icon={<Plus className="size-3.5" />} onClick={() => setAdding(true)}>
             Vincular
           </Button>
@@ -167,9 +166,11 @@ function BiometricsCard({ onChange }: { onChange: () => unknown }) {
                   {credential.lastUsedAt ? `último uso ${relativeTime(credential.lastUsedAt)}` : 'sin usar'}
                 </p>
               </div>
-              <Button size="sm" variant="ghost" icon={<Trash2 className="size-3.5" />} onClick={() => setToRemove(credential)} aria-label="Quitar dispositivo" />
             </li>
           ))}
+          <li className="px-5 py-3 text-xs text-stone-500">
+            ¿Cambiaste o perdiste tu teléfono? Acude a la Coordinación de Seguridad y Accesos para desvincularlo y poder vincular el nuevo.
+          </li>
         </ul>
       ) : (
         <p className="flex items-center gap-2 border-t border-stone-100 px-5 py-3 text-xs text-stone-500">
@@ -180,7 +181,7 @@ function BiometricsCard({ onChange }: { onChange: () => unknown }) {
 
       <Modal open={adding} onClose={() => setAdding(false)} size="sm" title="Vincular este dispositivo" description="Tu teléfono pedirá tu huella, rostro o PIN.">
         <ModalBody>
-          <Field label="Nombre del dispositivo" hint="Para identificarlo si después quieres quitarlo.">
+          <Field label="Nombre del dispositivo" hint="Para identificarlo en tu perfil. Solo puedes tener un dispositivo vinculado.">
             <input className="input" value={label} maxLength={60} onChange={event => setLabel(event.target.value)} />
           </Field>
         </ModalBody>
@@ -193,21 +194,6 @@ function BiometricsCard({ onChange }: { onChange: () => unknown }) {
           </Button>
         </ModalFooter>
       </Modal>
-
-      <ConfirmDialog
-        open={toRemove !== null}
-        title="Quitar dispositivo"
-        confirmLabel="Quitar"
-        message={`Ya no podrás registrar tu acceso con "${toRemove?.label}" hasta vincularlo de nuevo.`}
-        onCancel={() => setToRemove(null)}
-        onConfirm={async () => {
-          if (!toRemove) return;
-          setData(await personApi.removeBiometric(toRemove.id));
-          setToRemove(null);
-          onChange();
-          toast.notify('Dispositivo desvinculado.', 'success');
-        }}
-      />
     </SectionCard>
   );
 }

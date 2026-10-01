@@ -2,7 +2,7 @@ import type { AuthenticationResponseJSON, RegistrationResponseJSON } from '@simp
 import { Router } from 'express';
 import { z } from 'zod';
 import type { AccessRecord, PersonOverview, PersonSession } from '../../../shared/contracts.ts';
-import { many, run } from '../db/index.ts';
+import { many } from '../db/index.ts';
 import { parse } from '../lib/http.ts';
 import { checkSchema } from '../schemas.ts';
 import {
@@ -14,6 +14,7 @@ import {
   type AccessRecordRow,
 } from '../services/access.ts';
 import { audit } from '../services/audit.ts';
+import { notifyDeviceLinked } from '../services/notifications.ts';
 import { getPerson, personCredentialValid } from '../services/people.ts';
 import { authenticationOptions, completeRegistration, listCredentials, registrationOptions } from '../services/webauthn.ts';
 
@@ -88,15 +89,13 @@ personRouter.post('/biometrics', async (req, res) => {
   const personId = req.person!.id;
   await completeRegistration(personId, data.response as unknown as RegistrationResponseJSON, data.label);
   audit({ type: 'person', id: personId }, 'register_biometric', 'person', personId, { label: data.label });
+  // Aviso al correo institucional: si no fue la persona, puede reportarlo de inmediato
+  await notifyDeviceLinked(req.person!, data.label || 'Dispositivo');
   res.status(201).json(listCredentials(personId));
 });
 
-personRouter.delete('/biometrics/:id', (req, res) => {
-  const personId = req.person!.id;
-  run('DELETE FROM webauthn_credentials WHERE id = ? AND person_id = ?', req.params.id, personId);
-  audit({ type: 'person', id: personId }, 'remove_biometric', 'person', personId);
-  res.json(listCredentials(personId));
-});
+// Quitar un dispositivo ya no se hace desde el portal de la persona: lo hace la administración
+// (DELETE /api/staff/people/:id/biometrics), para que nadie pueda reemplazarlo con el suyo.
 
 personRouter.post('/biometrics/auth-options', async (req, res) => {
   res.json(await authenticationOptions(req.person!.id));
