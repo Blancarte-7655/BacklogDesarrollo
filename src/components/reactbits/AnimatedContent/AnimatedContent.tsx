@@ -1,3 +1,4 @@
+import { useReducedMotion } from 'motion/react';
 import React, { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -46,10 +47,17 @@ const AnimatedContent: React.FC<AnimatedContentProps> = ({
   ...props
 }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+
+    // Con "reducir movimiento" el contenido aparece directamente en su lugar
+    if (reduceMotion) {
+      gsap.set(el, { x: 0, y: 0, scale: 1, opacity: 1, visibility: 'visible' });
+      return;
+    }
 
     let scrollerTarget: Element | string | null = container || document.getElementById('snap-main-container') || null;
 
@@ -123,7 +131,8 @@ const AnimatedContent: React.FC<AnimatedContentProps> = ({
     disappearDuration,
     disappearEase,
     onComplete,
-    onDisappearanceComplete
+    onDisappearanceComplete,
+    reduceMotion
   ]);
 
   return (

@@ -1,4 +1,4 @@
-import { MotionValue, motion, useSpring, useTransform } from 'motion/react';
+import { MotionValue, motion, useReducedMotion, useSpring, useTransform } from 'motion/react';
 import type React from 'react';
 import { useEffect } from 'react';
 
@@ -63,13 +63,20 @@ function Digit({ place, value, height, digitStyle }: DigitProps) {
     );
   }
 
-  // Numeric digit
+  return <NumericDigit place={place} value={value} height={height} digitStyle={digitStyle} />;
+}
+
+/** Dígito numérico; va en su propio componente para que los hooks se llamen siempre en el mismo orden */
+function NumericDigit({ place, value, height, digitStyle }: Omit<DigitProps, 'place'> & { place: number }) {
   const valueRoundedToPlace = getValueRoundedToPlace(value, place);
   const animatedValue = useSpring(valueRoundedToPlace);
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
-    animatedValue.set(valueRoundedToPlace);
-  }, [animatedValue, valueRoundedToPlace]);
+    // Con "reducir movimiento" el dígito cambia sin girar
+    if (reduceMotion) animatedValue.jump(valueRoundedToPlace);
+    else animatedValue.set(valueRoundedToPlace);
+  }, [animatedValue, valueRoundedToPlace, reduceMotion]);
 
   const defaultStyle: React.CSSProperties = {
     height,

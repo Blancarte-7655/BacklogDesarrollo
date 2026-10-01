@@ -10,7 +10,8 @@
     "build": "tsc -b && vite build",
     "start": "tsx server/src/index.ts --production",
     "typecheck": "tsc -b",
-    "lint": "oxlint"
+    "lint": "oxlint",
+    "test": "tsx --test \"server/test/*.test.ts\""
   },
   "dependencies": {
     "@simplewebauthn/browser": "^14.0.0",

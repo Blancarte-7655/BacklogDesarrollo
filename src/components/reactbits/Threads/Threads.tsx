@@ -1,3 +1,4 @@
+import { useReducedMotion } from 'motion/react';
 import React, { useEffect, useRef } from 'react';
 import { Renderer, Program, Mesh, Triangle, Color } from 'ogl';
 
@@ -137,8 +138,10 @@ const Threads: React.FC<ThreadsProps> = ({
 
   // Keep the latest props in a ref so updating them mutates the live shader
   // uniforms instead of tearing down and rebuilding the whole WebGL context.
-  const propsRef = useRef({ color, amplitude, distance, enableMouseInteraction });
-  propsRef.current = { color, amplitude, distance, enableMouseInteraction };
+  // Con "reducir movimiento" activo se dibuja un solo cuadro fijo en lugar de animar
+  const reduceMotion = useReducedMotion() ?? false;
+  const propsRef = useRef({ color, amplitude, distance, enableMouseInteraction, reduceMotion });
+  propsRef.current = { color, amplitude, distance, enableMouseInteraction, reduceMotion };
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -174,7 +177,9 @@ const Threads: React.FC<ThreadsProps> = ({
     // resolution to keep large / high-DPI screens smooth; the effect is soft
     // enough that the downscale is imperceptible.
     const MAX_RENDER_DIM = 1920;
+    let staticFrameDrawn = false;
     function resize() {
+      staticFrameDrawn = false;
       const { clientWidth, clientHeight } = container;
       const baseDpr = Math.min(window.devicePixelRatio || 1, 2);
       const longestSide = Math.max(clientWidth, clientHeight) * baseDpr;
@@ -221,7 +226,8 @@ const Threads: React.FC<ThreadsProps> = ({
       animationFrameId.current = requestAnimationFrame(update);
       if (!isVisible || document.hidden) return;
 
-      const { color, amplitude, distance, enableMouseInteraction } = propsRef.current;
+      const { color, amplitude, distance, enableMouseInteraction, reduceMotion } = propsRef.current;
+      if (reduceMotion && staticFrameDrawn) return;
 
       program.uniforms.uColor.value.set(...color);
       program.uniforms.uAmplitude.value = amplitude;
@@ -237,9 +243,10 @@ const Threads: React.FC<ThreadsProps> = ({
         program.uniforms.uMouse.value[0] = 0.5;
         program.uniforms.uMouse.value[1] = 0.5;
       }
-      program.uniforms.iTime.value = t * 0.001;
+      program.uniforms.iTime.value = reduceMotion ? 0 : t * 0.001;
 
       renderer.render({ scene: mesh });
+      staticFrameDrawn = reduceMotion;
     }
     animationFrameId.current = requestAnimationFrame(update);
 
