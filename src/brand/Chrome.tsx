@@ -5,7 +5,7 @@ import { UdgSeal, Wordmark } from './Logo';
 /** Encabezado institucional sobre el fondo de marca (estilo portal universitario) */
 export function SiteHeader({ right }: { right?: React.ReactNode }) {
   return (
-    <header className="relative z-10 mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-5 py-5 sm:px-8">
+    <header className="relative z-30 mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-5 py-5 sm:px-8">
       <Link to="/" className="rounded-md focus-visible:ring-4 focus-visible:ring-white/40 focus-visible:outline-none">
         <Wordmark size="md" tone="white" subtitle />
       </Link>

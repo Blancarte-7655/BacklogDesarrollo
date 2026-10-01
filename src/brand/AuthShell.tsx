@@ -3,7 +3,6 @@ import { motion } from 'motion/react';
 import type { ReactNode } from 'react';
 import BlurText from '../components/reactbits/BlurText/BlurText';
 import { BrandBackdrop } from './BrandBackdrop';
-import { PapelPicado } from './PapelPicado';
 import { SiteFooter, SiteHeader } from './Chrome';
 
 interface AuthShellProps {
@@ -62,7 +61,7 @@ export function AuthShell({ portal, badge, badgeIcon: BadgeIcon, title, descript
           transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto w-full max-w-md overflow-hidden rounded-2xl bg-surface shadow-2xl shadow-black/25 lg:justify-self-end"
         >
-          <PapelPicado size={26} string={false} className="text-stone-400" />
+          <div className="brand-stripe h-1.5" />
           {children}
         </motion.div>
       </main>
