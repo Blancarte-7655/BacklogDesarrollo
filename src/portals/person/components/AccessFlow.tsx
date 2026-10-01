@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import type { AccessDirection, AccessPoint, CheckResult, GeoPoint } from '../../../../shared/contracts';
 import { ApiError, errorMessage } from '../../../api/http';
 import { getCurrentPosition } from '../../../lib/geo';
+import { MAX_GEO_ACCURACY_METERS } from '../../../../shared/rules';
 import { formatTime } from '../../../lib/format';
 import { Button } from '../../../ui/Button';
 import { FormError } from '../../../ui/Field';
@@ -44,12 +45,16 @@ function AccessFlowBody({ direction, accessPoint, hasBiometrics, onClose, onDone
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<CheckResult | null>(null);
   const needsGeo = accessPoint.lat !== null && accessPoint.lng !== null;
+  const imprecise = needsGeo && geo.status === 'ok' && geo.point!.accuracy > MAX_GEO_ACCURACY_METERS;
 
-  useEffect(() => {
+  const locate = () => {
+    setGeo({ status: 'pending', point: null });
     getCurrentPosition()
       .then(point => setGeo({ status: 'ok', point }))
       .catch(() => setGeo({ status: 'denied', point: null }));
-  }, []);
+  };
+
+  useEffect(locate, []);
 
   const submit = async () => {
     setBusy(true);
@@ -112,10 +117,12 @@ function AccessFlowBody({ direction, accessPoint, hasBiometrics, onClose, onDone
       <ModalBody className="space-y-3">
         <Row
           icon={geo.status === 'denied' ? MapPinOff : MapPin}
-          tone={geo.status === 'ok' ? 'ok' : geo.status === 'pending' ? 'pending' : needsGeo ? 'warn' : 'muted'}
+          tone={imprecise ? 'warn' : geo.status === 'ok' ? 'ok' : geo.status === 'pending' ? 'pending' : needsGeo ? 'warn' : 'muted'}
           title="Ubicación"
           detail={
-            geo.status === 'ok'
+            imprecise
+              ? `Precisión muy baja (±${geo.point!.accuracy} m). Activa la ubicación precisa o sal a un lugar abierto.`
+              : geo.status === 'ok'
               ? `Obtenida con precisión de ±${geo.point!.accuracy} m`
               : geo.status === 'pending'
                 ? 'Obteniendo tu ubicación…'
@@ -124,6 +131,11 @@ function AccessFlowBody({ direction, accessPoint, hasBiometrics, onClose, onDone
                   : 'No disponible. Este acceso no la exige.'
           }
         />
+        {needsGeo && (imprecise || geo.status === 'denied') && (
+          <button type="button" onClick={locate} className="block w-full text-center text-sm font-semibold text-verde-700 hover:underline">
+            Volver a obtener mi ubicación
+          </button>
+        )}
         <Row
           icon={Fingerprint}
           tone={hasBiometrics ? 'ok' : 'warn'}

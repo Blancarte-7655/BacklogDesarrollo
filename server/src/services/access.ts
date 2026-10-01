@@ -11,7 +11,7 @@ import type {
   IncidentType,
   PersonRole,
 } from '../../../shared/contracts.ts';
-import { distanceMeters, PERSON_ROLE_LABELS } from '../../../shared/rules.ts';
+import { checkGeofence, PERSON_ROLE_LABELS } from '../../../shared/rules.ts';
 import { config } from '../config.ts';
 import { bool, many, nowIso, one, run } from '../db/index.ts';
 import { badRequest, conflict, forbidden, notFound } from '../lib/http.ts';
@@ -176,8 +176,14 @@ export async function registerAccess(person: PersonRow, input: CheckInput): Prom
   // 3. Geocerca del acceso
   if (config.enforceGeofence && point.lat !== null && point.lng !== null) {
     if (!input.geo) throw badRequest('Activa la ubicación para registrar tu acceso.');
-    const distance = distanceMeters(input.geo, { lat: point.lat, lng: point.lng });
-    if (distance > point.radiusMeters + input.geo.accuracy) {
+    const geofence = checkGeofence(input.geo, { lat: point.lat, lng: point.lng, radiusMeters: point.radiusMeters });
+    if (!geofence.ok && geofence.reason === 'imprecisa') {
+      throw badRequest(
+        `Tu ubicación es muy imprecisa (±${input.geo.accuracy} m). Activa la ubicación precisa o sal a un lugar abierto e inténtalo de nuevo.`,
+      );
+    }
+    if (!geofence.ok) {
+      const { distance } = geofence;
       raiseAlert({
         type: 'fuera_de_area',
         title: 'Intento de registro fuera del campus',

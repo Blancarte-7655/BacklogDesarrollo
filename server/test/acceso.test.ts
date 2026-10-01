@@ -167,6 +167,12 @@ describe('Accesos denegados', () => {
     assert.equal(result.direction, 'in');
   });
 
+  test('una ubicación demasiado imprecisa no puede saltarse la geocerca', async () => {
+    const person = createPerson();
+    const farButImprecise = { lat: CAMPUS.lat + 0.5, lng: CAMPUS.lng, accuracy: 100000 };
+    await rejectsWith(access(person, createAccessPoint({ geofence: true }), 'in', farButImprecise), 400);
+  });
+
   test('lejos del acceso se rechaza y genera alerta', async () => {
     const person = createPerson();
     const farAway = { lat: CAMPUS.lat + 0.05, lng: CAMPUS.lng, accuracy: 10 }; // ~5.5 km
