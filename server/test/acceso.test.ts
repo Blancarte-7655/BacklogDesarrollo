@@ -209,3 +209,21 @@ describe('Entradas que se quedan abiertas', () => {
     assert.equal(alertsOf(person.id, 'incidencia'), 1);
   });
 });
+
+/* ---------- Biometría ---------- */
+
+describe('Dispositivos biométricos', () => {
+  test('una persona con un dispositivo vinculado no puede vincular otro', async () => {
+    const { registrationOptions } = await import('../src/services/webauthn.ts');
+    const person = createPerson();
+    run(
+      'INSERT INTO webauthn_credentials (id, person_id, public_key, transports, label) VALUES (?, ?, ?, ?, ?)',
+      randomUUID(),
+      person.id,
+      new Uint8Array([1, 2, 3]),
+      '[]',
+      'Teléfono de la persona',
+    );
+    await rejectsWith(registrationOptions(person), 409);
+  });
+});

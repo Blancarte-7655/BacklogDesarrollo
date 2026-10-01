@@ -13,6 +13,5 @@ export const personApi = {
   biometrics: () => api<BiometricCredential[]>('/person/biometrics'),
   registrationOptions: () => api<RegistrationOptions>('/person/biometrics/register-options', { method: 'POST' }),
   registerBiometric: (response: unknown, label: string) => api<BiometricCredential[]>('/person/biometrics', { body: { response, label } }),
-  removeBiometric: (id: string) => api<BiometricCredential[]>(`/person/biometrics/${encodeURIComponent(id)}`, { method: 'DELETE' }),
   authenticationOptions: () => api<AuthenticationOptions>('/person/biometrics/auth-options', { method: 'POST' }),
 };
