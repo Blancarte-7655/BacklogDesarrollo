@@ -63,7 +63,11 @@ function Digit({ place, value, height, digitStyle }: DigitProps) {
     );
   }
 
-  // Numeric digit
+  return <NumericDigit place={place} value={value} height={height} digitStyle={digitStyle} />;
+}
+
+/** Dígito numérico; va en su propio componente para que los hooks se llamen siempre en el mismo orden */
+function NumericDigit({ place, value, height, digitStyle }: Omit<DigitProps, 'place'> & { place: number }) {
   const valueRoundedToPlace = getValueRoundedToPlace(value, place);
   const animatedValue = useSpring(valueRoundedToPlace);
   const reduceMotion = useReducedMotion();
