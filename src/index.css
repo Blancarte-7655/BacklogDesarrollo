@@ -100,84 +100,85 @@
 
 /* ---------- Modo oscuro: "noche en el campus" ---------- */
 :root[data-theme="dark"] {
+  /* Oscuro suave: gris verdoso, no negro, y textos sin blanco puro para no cansar la vista */
   color-scheme: dark;
-  --chart-1: #52a86e;
-  --chart-2: #b85a2e;
+  --chart-1: #5aa874;
+  --chart-2: #b9653a;
 
-  --color-page: #0d1510;
-  --color-surface: #141f18;
-  --color-raised: #1a281f;
+  --color-page: #1b211d;
+  --color-surface: #232a25;
+  --color-raised: #2a322c;
 
-  --color-stone-50: #111a14;
-  --color-stone-100: #19251d;
-  --color-stone-200: #253328;
-  --color-stone-300: #344437;
-  --color-stone-400: #7d8e81;
-  --color-stone-500: #9fb0a3;
-  --color-stone-600: #b4c3b8;
-  --color-stone-700: #cbd7cf;
-  --color-stone-800: #dde6e0;
-  --color-stone-900: #edf3ef;
-  --color-stone-950: #f6f9f7;
+  --color-stone-50: #262e28;
+  --color-stone-100: #2c352f;
+  --color-stone-200: #36413a;
+  --color-stone-300: #46524a;
+  --color-stone-400: #879389;
+  --color-stone-500: #a2ada5;
+  --color-stone-600: #b5bfb8;
+  --color-stone-700: #c6cfc9;
+  --color-stone-800: #d4dcd6;
+  --color-stone-900: #e1e7e2;
+  --color-stone-950: #eaefeb;
 
-  --color-verde-50: #142a1b;
-  --color-verde-100: #1a3723;
-  --color-verde-200: #23502f;
-  --color-verde-300: #2f6b40;
-  --color-verde-400: #46a066;
-  --color-verde-500: #5bb87b;
-  --color-verde-600: #73c990;
-  --color-verde-700: #8ad6a4;
-  --color-verde-800: #a7e3bb;
-  --color-verde-900: #c5eed2;
-  --color-verde-950: #e1f7e8;
+  --color-verde-50: #263a2d;
+  --color-verde-100: #2c4433;
+  --color-verde-200: #36573f;
+  --color-verde-300: #44704f;
+  --color-verde-400: #5c9a6d;
+  --color-verde-500: #6eaa7e;
+  --color-verde-600: #82bb91;
+  --color-verde-700: #96c8a3;
+  --color-verde-800: #acd5b6;
+  --color-verde-900: #c4e2cb;
+  --color-verde-950: #dcefe0;
 
-  --color-oliva-300: #3d5420;
-  --color-oliva-400: #8cc63f;
-  --color-oliva-500: #a2d65e;
-  --color-oliva-600: #b5df7e;
-  --color-oliva-700: #c8e89f;
+  --color-oliva-300: #45562f;
+  --color-oliva-400: #9cc466;
+  --color-oliva-500: #a9cb7b;
+  --color-oliva-600: #b8d491;
+  --color-oliva-700: #c7dea8;
 
-  --color-terracota-50: #33190e;
-  --color-terracota-100: #432114;
-  --color-terracota-200: #5e2f1c;
-  --color-terracota-300: #8a4a2e;
-  --color-terracota-400: #e08756;
-  --color-terracota-500: #e9976b;
-  --color-terracota-600: #eea883;
-  --color-terracota-700: #f3bc9c;
-  --color-terracota-800: #f7cfb6;
+  --color-terracota-50: #3d2a20;
+  --color-terracota-100: #4a3125;
+  --color-terracota-200: #5f3e2e;
+  --color-terracota-300: #85563d;
+  --color-terracota-400: #d38d66;
+  --color-terracota-500: #dc9d79;
+  --color-terracota-600: #e2ac8c;
+  --color-terracota-700: #e8bea3;
+  --color-terracota-800: #eecfbb;
 
-  --color-cafe-50: #241c15;
-  --color-cafe-100: #33281e;
-  --color-cafe-300: #8a6d55;
-  --color-cafe-500: #c4a184;
-  --color-cafe-600: #d2b294;
-  --color-cafe-700: #dfc4a9;
-  --color-cafe-800: #ead5bf;
-  --color-cafe-900: #f2e4d5;
+  --color-cafe-50: #342b24;
+  --color-cafe-100: #3f342b;
+  --color-cafe-300: #8a735f;
+  --color-cafe-500: #c2a68e;
+  --color-cafe-600: #cdb39d;
+  --color-cafe-700: #d8c2ae;
+  --color-cafe-800: #e2d2c2;
+  --color-cafe-900: #ebe0d5;
 
-  --color-amber-50: #2c210c;
-  --color-amber-100: #3a2b0f;
-  --color-amber-200: #59410f;
-  --color-amber-500: #f2b84b;
-  --color-amber-600: #f4c260;
-  --color-amber-700: #f7cf7c;
-  --color-amber-800: #f9dc9c;
+  --color-amber-50: #3a3120;
+  --color-amber-100: #463a22;
+  --color-amber-200: #5e4c25;
+  --color-amber-500: #e0b45c;
+  --color-amber-600: #e5bf72;
+  --color-amber-700: #eacb8a;
+  --color-amber-800: #efd8a6;
 
-  --color-red-50: #361615;
-  --color-red-100: #451c1b;
-  --color-red-200: #63292a;
-  --color-red-500: #f27c76;
-  --color-red-600: #f6918b;
-  --color-red-700: #f9a8a3;
+  --color-red-50: #432826;
+  --color-red-100: #4f2e2c;
+  --color-red-200: #683a38;
+  --color-red-500: #e38b85;
+  --color-red-600: #e89c97;
+  --color-red-700: #edaeaa;
 
-  --color-sky-50: #0e2535;
-  --color-sky-200: #1b4664;
-  --color-sky-600: #72c3ef;
-  --color-sky-700: #93d2f4;
+  --color-sky-50: #213444;
+  --color-sky-200: #2f4d66;
+  --color-sky-600: #8bc3e3;
+  --color-sky-700: #a3cfe8;
 
-  --color-lime-100: #26361a;
+  --color-lime-100: #33402a;
 }
 
 @layer base {

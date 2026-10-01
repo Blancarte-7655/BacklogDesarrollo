@@ -40,7 +40,7 @@ function apply(prefs: Preferences) {
   root.dataset.theme = dark ? 'dark' : 'light';
   root.dataset.text = prefs.text;
   root.dataset.motion = prefs.motion;
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0d1510' : '#1e6b3a');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#1b211d' : '#1e6b3a');
 }
 
 darkQuery?.addEventListener('change', () => apply(current));
