@@ -1,42 +1,76 @@
 # UniAccess · CUTlaquepaque
 
-Sistema de control de acceso al Centro Universitario de Tlaquepaque mediante **check-in / check-out**
-para alumnos, docentes, personal e invitados.
+> Control de entradas y salidas del Centro Universitario de Tlaquepaque **desde el celular de cada persona**, sin lectores ni torniquetes.
 
-Proyecto de la materia **Seminario de Integración: Desarrollo** · 7.º de Informática.
+![Node.js](https://img.shields.io/badge/Node.js-22.13%2B-339933?logo=node.js&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)
+![Licencia](https://img.shields.io/badge/licencia-MIT-blue)
 
-El alcance, las historias de usuario y las decisiones de diseño están en [docs/ALCANCE.md](docs/ALCANCE.md).
+🇺🇸 [English version](README.en.md)
+
+Proyecto de la materia **Seminario de Integración: Desarrollo** · 7.º semestre de Ingeniería en Informática.
+
+<!-- TODO: agregar capturas en docs/capturas/ y descomentar
+<p align="center">
+  <img src="docs/capturas/registro-celular.png" alt="Registro de entrada desde el celular con huella" width="260">
+  <img src="docs/capturas/tablero-vigilancia.png" alt="Tablero en vivo del portal de vigilancia" width="560">
+</p>
+-->
 
 ---
 
-## Dos portales separados
+## Contenido
 
-| Portal | Ruta | Quién entra | Cómo entra |
-| --- | --- | --- | --- |
-| Portal de acceso | `/acceso` | Alumnos, docentes y personal | Matrícula o correo institucional + contraseña, desde el celular |
-| Portal institucional | `/control` | Vigilancia y administración | Correo institucional **previamente registrado** + contraseña |
+- [El problema](#el-problema)
+- [Qué hace](#qué-hace)
+- [Inicio rápido](#inicio-rápido)
+- [Probar la demo](#probar-la-demo)
+- [Variables de entorno](#variables-de-entorno)
+- [Arquitectura](#arquitectura)
+- [Seguridad](#seguridad)
+- [Privacidad de datos](#privacidad-de-datos)
+- [Limitaciones conocidas](#limitaciones-conocidas)
+- [Producción](#producción)
+- [Cómo contribuir](#cómo-contribuir)
+- [Equipo](#equipo)
+- [Licencia](#licencia)
 
-Cada portal tiene su propia cookie de sesión y su propio paquete de código: iniciar sesión en uno no da acceso al otro.
+---
+
+## El problema
+
+El centro universitario necesita saber **quién está dentro del campus** y llevar un historial de entradas y salidas de alumnos, docentes, personal e invitados, pero **no cuenta con hardware** (lectores de credencial o torniquetes) en sus accesos.
+
+**Nuestra solución:** el celular de cada persona funciona como su credencial. La identidad se confirma con la **huella o el rostro del propio teléfono** (WebAuthn) y, opcionalmente, con una **geocerca** que valida que la persona esté junto al acceso.
+
+El alcance completo, las historias de usuario con priorización MoSCoW y las reglas de negocio están en **[docs/ALCANCE.md](docs/ALCANCE.md)**.
 
 ---
 
 ## Qué hace
 
+La plataforma tiene **dos portales separados**, cada uno con su propia sesión:
+
+| Portal | Ruta | Quién entra | Cómo entra |
+| --- | --- | --- | --- |
+| Portal de acceso | `/acceso` | Alumnos, docentes y personal | Matrícula o correo institucional + contraseña, desde el celular |
+| Portal institucional | `/control` | Vigilancia y administración | Correo institucional previamente registrado + contraseña |
+
 ### Portal de acceso (celular)
-- **Entrada y salida** como acciones separadas, confirmadas con la **biometría del propio teléfono** (huella o rostro, vía WebAuthn).
-- **Geocerca opcional por acceso**: si la puerta tiene coordenadas, el registro solo procede estando cerca.
-- Rechaza el registro y **alerta a vigilancia** cuando la credencial venció, está dada de baja, el rol no puede usar ese acceso o la persona está fuera del campus.
-- Si marca salida sin tener entrada abierta, **se registra igual y queda como incidencia**; si ya registró la salida, avisa y no la duplica.
+- **Entrada y salida** como acciones separadas, confirmadas con biometría del teléfono.
+- **Geocerca opcional** por acceso: solo se registra estando cerca.
+- Rechaza y **alerta a vigilancia** si la credencial venció, está dada de baja, el rol no puede usar ese acceso o la persona está fuera del área.
+- Salida sin entrada previa: se registra y queda como **incidencia**. Salida repetida: avisa y no la duplica.
 - Historial personal con filtros y descarga en CSV.
-- Perfil con la credencial digital y la gestión de dispositivos biométricos.
 
 ### Portal institucional
-- **Tablero en vivo**: quién está dentro del campus, con búsqueda y filtro por rol, actualizado cada 15 segundos.
-- **Pases de invitado**: se emiten con motivo y anfitrión, registran la entrada, permiten reingreso el mismo día y se cierran al salir. Al día siguiente se rechazan por vencidos.
-- **Registro manual de respaldo** para cuando el teléfono de la persona no puede registrar.
-- **Alertas** de accesos denegados e incidencias, con marca de revisado.
-- **Historial** con filtros por periodo, persona, acceso, rol y estado, y exportación a CSV.
-- **Administración**: alta y baja de personas (la baja revoca el acceso y conserva el historial), accesos del campus con roles permitidos y geocerca, y operadores del sistema.
+- **Tablero en vivo** de quién está dentro, con búsqueda y filtro por rol (se actualiza cada 15 s).
+- **Pases de invitado** del día, con motivo y anfitrión.
+- **Registro manual** de respaldo cuando el teléfono de la persona no puede registrar.
+- **Alertas** de accesos denegados e incidencias.
+- **Historial** con filtros y exportación a CSV.
+- **Administración** de personas, accesos (roles permitidos y geocerca) y operadores.
 
 ### Roles
 - Personas: `alumno`, `docente`, `personal`.
@@ -44,40 +78,158 @@ Cada portal tiene su propia cookie de sesión y su propio paquete de código: in
 
 ---
 
-## Stack
+## Inicio rápido
+
+**Requisitos:** [Node.js 22.13 o superior](https://nodejs.org/) (incluye SQLite integrado; no hay que instalar base de datos).
+
+```bash
+# 1. Clona el repositorio
+git clone https://github.com/DannNS20/BacklogDesarrollo.git
+cd BacklogDesarrollo
+
+# 2. Instala dependencias
+npm install
+
+# 3. Crea tu archivo de configuración
+cp .env.example .env        # En Windows (PowerShell): Copy-Item .env.example .env
+
+# 4. Edita .env y define al menos SEED_ADMIN_EMAIL y SEED_ADMIN_PASSWORD
+
+# 5. Arranca la API y los portales
+npm run dev
+```
+
+| Servicio | URL |
+| --- | --- |
+| Portales | http://localhost:5190 |
+| API | http://localhost:4590 |
+
+La primera vez, el servidor crea el **administrador inicial** con los datos de `.env` y tres accesos de ejemplo (principal, vehicular y de servicios).
+
+### Scripts disponibles
+
+| Comando | Qué hace |
+| --- | --- |
+| `npm run dev` | API + portales en modo desarrollo |
+| `npm run build` | Compila los portales para producción |
+| `npm start` | Servidor de producción (API + portales compilados) |
+| `npm run typecheck` | Revisión de tipos con TypeScript |
+| `npm run lint` | Revisión de estilo con oxlint |
+
+---
+
+## Probar la demo
+
+1. En `.env`, pon `REQUIRE_BIOMETRIC=false` para poder registrar acceso desde una computadora sin huella.
+2. Abre http://localhost:5190/control e inicia sesión con el administrador de `.env`.
+3. En **Personas**, da de alta a un alumno. Necesitas:
+   - matrícula de 6 a 10 dígitos,
+   - correo institucional terminado en `udg.mx` (por ejemplo, `@alumnos.udg.mx`).
+
+   La contraseña se genera automáticamente y **se muestra una sola vez**: cópiala.
+4. Abre http://localhost:5190/acceso en otra ventana (o en tu celular) e inicia sesión con esa matrícula y contraseña.
+5. Registra una **entrada** y revisa cómo aparece en el **tablero en vivo** del portal institucional.
+
+> Para probar la biometría real en el celular se necesita HTTPS (ver [Producción](#producción)).
+
+---
+
+## Variables de entorno
+
+Copia `.env.example` como `.env`. Las principales:
+
+| Variable | Valor por defecto | Para qué sirve |
+| --- | --- | --- |
+| `API_PORT` | `4590` | Puerto de la API en desarrollo |
+| `APP_ORIGIN` | `http://localhost:5190` | URL pública; la biometría queda ligada a este dominio |
+| `REQUIRE_BIOMETRIC` | `true` | `false` permite registrar acceso sin biometría (demostraciones) |
+| `ENFORCE_GEOFENCE` | `true` | `false` ignora la geocerca de los accesos |
+| `SEED_ADMIN_EMAIL` | — | Correo del administrador inicial |
+| `SEED_ADMIN_PASSWORD` | — | Contraseña del administrador inicial |
+| `SEED_ADMIN_NAME` | `Administrador del sistema` | Nombre del administrador inicial |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` | — | Correo saliente. Sin SMTP, los correos se guardan en `server/data/outbox` |
+| `DATA_DIR` | `server/data` | Carpeta de la base de datos |
+
+---
+
+## Arquitectura
+
+```
+ Celular / navegador                     Servidor Node.js                    Datos
+┌─────────────────────┐   HTTPS + JSON   ┌──────────────────────────┐      ┌──────────────┐
+│ Portal de acceso    │ ───────────────▶ │ Express 5 + Zod          │ ───▶ │ SQLite       │
+│ Portal institucional│ ◀─────────────── │ Sesiones · WebAuthn      │      │ (node:sqlite)│
+│ React 19 + Vite     │                  │ Reglas de acceso         │      └──────────────┘
+└─────────────────────┘                  └──────────────────────────┘
+        │  huella / rostro (WebAuthn): nunca sale del teléfono
+```
 
 | Capa | Tecnología |
 | --- | --- |
 | Portales | React 19 + TypeScript + Vite + Tailwind CSS v4 + React Router |
-| Animaciones | [React Bits](https://reactbits.dev): Threads, BlurText, RotatingText, GlareHover, AnimatedContent, SpotlightCard, CountUp, Counter, ClickSpark; más Motion |
+| Animaciones | [React Bits](https://reactbits.dev) y Motion |
 | API | Node.js + Express 5 + TypeScript (`tsx`) + Zod |
-| Base de datos | SQLite integrado en Node (`node:sqlite`), sin instalar nada aparte. El esquema es SQL estándar y se puede migrar a PostgreSQL o SQL Server |
+| Base de datos | SQLite integrado en Node (`node:sqlite`). El esquema es SQL estándar, migrable a PostgreSQL o SQL Server |
 | Biometría | WebAuthn / passkeys con `@simplewebauthn`, verificadas en el servidor |
-| Correo | Nodemailer (SMTP). Sin SMTP, los correos se guardan en `server/data/outbox` |
+| Correo | Nodemailer (SMTP) |
+
+### Estructura de carpetas
+
+```
+docs/ALCANCE.md         Historias de usuario, MoSCoW y reglas de negocio
+shared/                 Contratos de datos y reglas compartidas por API y portales
+server/src/
+  db/                   Esquema SQL, conexión y datos iniciales
+  lib/                  Contraseñas, sesiones, correo, límites, fechas
+  middleware/           Autenticación por portal
+  routes/               auth, person y staff/* (operación, personas, configuración)
+  services/             Lógica de acceso, invitados, alertas y biometría
+src/
+  portals/Landing.tsx   Portada
+  portals/person/       Portal de acceso (celular)
+  portals/staff/        Portal institucional (vigilancia y administración)
+  ui/  components/      Componentes reutilizables
+```
 
 ---
 
-## Puesta en marcha
+## Seguridad
 
-Requisitos: **Node.js 22.13 o superior**.
+- Contraseñas con **scrypt** y sal aleatoria; solo la administración las genera y se muestran una sola vez.
+- **Sesiones independientes por portal**, con cookies `HttpOnly` y `SameSite=Strict` guardadas con hash.
+- Las bajas y los cambios de contraseña **cierran todas las sesiones** de esa cuenta.
+- Límite de intentos de inicio de sesión.
+- Validación de toda la entrada con Zod; las escrituras solo aceptan JSON.
+- Biometría con desafío de un solo uso verificado en el servidor.
+- Bitácora (`audit_log`) de altas, bajas, contraseñas, registros manuales y pases de invitado.
 
-```bash
-npm install
-npm run dev
-```
+---
 
-- Portales: http://localhost:5190
-- API: http://localhost:4590 (configurable con `API_PORT`)
+## Privacidad de datos
 
-La primera vez, el servidor crea el **administrador inicial** con `SEED_ADMIN_EMAIL` y `SEED_ADMIN_PASSWORD` del archivo `.env` (ver `.env.example`), además de tres accesos de ejemplo. Desde el portal institucional se dan de alta las personas y los demás operadores.
+En apego a la *Ley Federal de Protección de Datos Personales en Posesión de los Particulares*:
 
-### Variables útiles
+| Dato | ¿Se guarda? | Para qué |
+| --- | --- | --- |
+| Nombre, matrícula, correo, rol | Sí | Identificar a la persona |
+| Fecha y hora de entrada/salida | Sí | Historial de acceso |
+| Ubicación al registrar (si hay geocerca) | Sí, en el registro | Validar que la persona estaba en el acceso |
+| Huella o rostro | **No** | La verificación ocurre en el teléfono; el servidor solo recibe una firma |
 
-| Variable | Para qué sirve |
-| --- | --- |
-| `REQUIRE_BIOMETRIC` | `false` permite registrar acceso sin biometría (útil para demostraciones en computadora) |
-| `ENFORCE_GEOFENCE` | `false` ignora la geocerca de los accesos |
-| `APP_ORIGIN` | URL pública; la biometría queda ligada a este dominio |
+<!-- TODO: enlazar el aviso de privacidad y definir cuánto tiempo se conservan los registros -->
+
+---
+
+## Limitaciones conocidas
+
+Decisiones conscientes y deuda técnica de esta versión:
+
+- **Reportes de afluencia** (historia 10, *Won't*) quedan fuera de este ciclo.
+- La **ubicación la reporta el teléfono**, por lo que puede falsificarse; la geocerca es una barrera, no una garantía.
+- El límite de intentos y los desafíos biométricos viven **en memoria**: se reinician si se reinicia el servidor y no funcionan con varias instancias.
+- Sin integración con torniquetes, lectores de credencial ni el directorio institucional.
+- Es una aplicación web, no una app nativa.
+- Aún no hay pruebas automatizadas. <!-- TODO: actualizar cuando existan -->
 
 ---
 
@@ -96,34 +248,30 @@ El mismo servidor entrega la API y los portales compilados.
 
 ---
 
-## Seguridad
+## Cómo contribuir
 
-- Contraseñas con **scrypt** y sal aleatoria; solo la administración las genera y se muestran una sola vez.
-- **Sesiones independientes por portal**, con cookies `HttpOnly` y `SameSite=Strict` guardadas con hash.
-- Las bajas y los cambios de contraseña **cierran todas las sesiones** de esa cuenta.
-- Límite de intentos de inicio de sesión.
-- Validación de toda la entrada con Zod; las escrituras solo aceptan JSON.
-- Biometría con desafío de un solo uso verificado en el servidor; los datos biométricos nunca salen del dispositivo.
-- Bitácora (`audit_log`) de altas, bajas, contraseñas, registros manuales y pases de invitado.
+1. Haz un *fork* del repositorio y actualízalo con la rama `main` del equipo.
+2. Crea una rama por cambio: `feat/…`, `fix/…` o `docs/…` (por ejemplo, `docs/readme`).
+3. Escribe commits con [Conventional Commits](https://www.conventionalcommits.org/es/):
+   `feat: agrega filtro por acceso`, `fix: evita salida duplicada`, `docs: actualiza README`.
+4. Antes de subir, verifica que pasen `npm run typecheck` y `npm run lint`.
+5. Abre un **Pull Request** hacia `main` describiendo qué cambió y cómo probarlo.
+   Se necesita **al menos una revisión** de otro integrante para hacer *merge*.
 
 ---
 
-## Estructura
+## Equipo
 
-```
-docs/ALCANCE.md         Historias de usuario, MoSCoW y reglas de negocio
-shared/                 Contrato de datos y reglas compartidas
-server/src/
-  db/                   Esquema SQL, conexión y datos iniciales
-  lib/                  Contraseñas, sesiones, correo, límites, fechas
-  routes/               auth, person y staff/* (operación, personas, configuración)
-  services/             Lógica de acceso, invitados, alertas y biometría
-src/portals/
-  Landing.tsx           Portada
-  person/               Portal de acceso (celular)
-  staff/                Portal institucional (vigilancia y administración)
-```
+<!-- TODO: completar con los integrantes -->
 
-## Fuera de este ciclo
+| Integrante | Rol en Scrum | GitHub |
+| --- | --- | --- |
+| Nombre | Product Owner | [@usuario](https://github.com/usuario) |
+| Nombre | Scrum Master | [@usuario](https://github.com/usuario) |
+| Nombre | Desarrollo | [@usuario](https://github.com/usuario) |
 
-Según la priorización MoSCoW del documento: los **reportes de afluencia por hora, día y tipo de usuario** (historia 10) quedan en el backlog y no se implementan en estas 10 semanas.
+---
+
+## Licencia
+
+Distribuido bajo la licencia MIT. Consulta [LICENSE](LICENSE). <!-- TODO: confirmar licencia con el equipo y agregar el archivo LICENSE -->
