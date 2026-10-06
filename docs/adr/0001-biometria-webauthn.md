@@ -20,6 +20,26 @@ uso (5 minutos), el teléfono lo firma con una llave privada que nunca sale del 
 servidor verifica la firma con la llave pública guardada. Se limita a **un dispositivo por persona**;
 cambiarlo lo autoriza la administración.
 
+## Justificación
+
+La decisión se tomó con cuatro criterios, en orden de importancia:
+
+| Criterio | Por qué importa aquí | WebAuthn | QR impreso | SMS/correo | Facial propio |
+| --- | --- | --- | --- | --- | --- |
+| **Prueba quién registra** | El objetivo de las historias 1 y 3 es saber quién entra | ✅ Requiere la huella o rostro del dueño | ❌ Cualquiera con la foto del QR | ⚠️ Quien tenga el teléfono | ✅ |
+| **Costo de hardware** | No hay presupuesto para lectores en este ciclo | ✅ Cero: usa el teléfono | ✅ Cero | ⚠️ Costo por SMS | ❌ Cámaras y servidor de IA |
+| **Riesgo con datos personales** | La biometría es un dato personal sensible según la LFPDPPP | ✅ No sale del teléfono | ✅ | ✅ | ❌ El servidor guardaría rostros |
+| **Tiempo en la entrada** | En horas pico se forman filas | ✅ 1–2 s | ✅ | ❌ 10–30 s esperando el código | ✅ |
+
+WebAuthn es la única opción que cumple los cuatro. Además:
+- Es un **estándar abierto del W3C** que ya soportan Chrome, Safari, Edge y Firefox en Android e iOS,
+  así que no depende de un proveedor ni de instalar una app.
+- La verificación es **criptográfica**: el servidor no compara imágenes, compara una firma, lo que
+  elimina falsos positivos por iluminación o ángulo.
+- Cada desafío es de **un solo uso**: aunque alguien intercepte una respuesta, no puede reutilizarla.
+- El límite de un dispositivo por persona cierra el hueco de "vinculo mi huella a la cuenta de mi
+  amigo", que una contraseña sola no resuelve.
+
 ## Alternativas consideradas
 
 | Alternativa | Por qué no |

@@ -22,6 +22,23 @@ Usar dos barreras opcionales y configurables desde el portal institucional:
 
 Cada rechazo genera una alerta para vigilancia.
 
+## Justificación
+
+- **El hueco era real y medible:** con la regla anterior (distancia ≤ radio + precisión reportada),
+  enviar `accuracy: 100000` permitía registrar desde cualquier punto a 100 km. Una prueba automatizada
+  (`reglas.test.ts` y `acceso.test.ts`) reproduce el caso y confirma que ahora se rechaza.
+- **Por qué ±100 m:** el GPS de un teléfono en exteriores suele dar entre 5 y 20 m, y en interiores
+  o con poca señal entre 20 y 65 m. Un tope de 100 m deja pasar lecturas legítimas y rechaza las que
+  no permiten saber si la persona está en el acceso (el radio por defecto de la geocerca es de 300 m).
+- **Dos señales independientes:** falsificar la ubicación se hace con una app; falsificar la IP de la
+  red del campus requiere estar conectado a esa red. Pedir ambas obliga a un atacante a vencer dos
+  mecanismos distintos, sin agregar hardware.
+- **Seguro contra bloqueos:** la regla de "no se puede guardar una lista que deje fuera a quien la
+  guarda" y la excepción de `localhost` evitan que la administración pierda el acceso por un error
+  de captura, un riesgo común en listas de IP permitidas.
+- **Opcional por diseño:** ambas barreras vienen apagadas y se activan desde el portal, porque los
+  rangos de red los define el área de sistemas del campus y pueden cambiar.
+
 ## Alternativas consideradas
 
 | Alternativa | Por qué no |

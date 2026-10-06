@@ -12,6 +12,15 @@
 
 Qué se decidió, en una o dos oraciones claras.
 
+## Justificación
+
+¿Por qué esta opción y no otra? Usa criterios técnicos medibles del contexto (costo, tiempo,
+seguridad, rendimiento, mantenimiento), no gustos personales. Si ayuda, compara en una tabla:
+
+| Criterio | Peso | Opción elegida | Alternativa A |
+| --- | --- | --- | --- |
+| | | | |
+
 ## Alternativas consideradas
 
 | Alternativa | Por qué no |

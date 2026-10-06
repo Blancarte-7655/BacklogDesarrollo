@@ -18,6 +18,21 @@ Separar **dos portales** (`/acceso` y `/control`) con:
 - código del frontend dividido en paquetes que se descargan por separado (`React.lazy`), para que
   quien registra su acceso nunca reciba el código del portal institucional.
 
+## Justificación
+
+- **Menor superficie de error (defensa en profundidad):** con un solo portal, un olvido en una sola
+  validación de rol expone el padrón completo. Con dos portales, una sesión de alumno ni siquiera se
+  reconoce en las rutas `/api/staff/*`: para acceder haría falta fallar en dos capas a la vez
+  (cookie distinta y middleware distinto).
+- **Principio de mínimo privilegio:** cada persona recibe solo el código y los datos que necesita.
+  El paquete del portal institucional (tablas, administración, exportación) nunca se descarga en el
+  celular de un alumno, lo que además reduce lo que se carga en datos móviles.
+- **Duración de sesión distinta por riesgo:** el celular se usa a diario para entrar, así que una
+  sesión de 30 días evita pedir contraseña en la puerta; el portal institucional maneja datos de
+  toda la comunidad, por eso caduca a las 10 horas (un turno de vigilancia).
+- **Costo bajo:** separar los portales no duplicó el modelo de datos: `shared/` mantiene un solo
+  contrato de tipos y reglas para ambos y para el servidor.
+
 ## Alternativas consideradas
 
 | Alternativa | Por qué no |
