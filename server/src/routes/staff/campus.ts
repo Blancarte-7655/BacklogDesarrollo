@@ -75,8 +75,9 @@ campusRouter.post('/rooms', requireAdmin, (req, res) => {
 });
 
 campusRouter.delete('/rooms/:id', requireAdmin, (req, res) => {
-  deleteRoom(req.params.id);
-  audit(actor(req), 'delete_room', 'room', req.params.id);
+  const id = String(req.params.id);
+  deleteRoom(id);
+  audit(actor(req), 'delete_room', 'room', id);
   res.status(204).end();
 });
 
