@@ -1,0 +1,48 @@
+# Publica la rama feat/demo-completa en https://uniaccess.aquora.dev
+name: Publicar UniAccess
+
+on:
+  push:
+    branches: [feat/demo-completa]
+  workflow_dispatch:
+
+concurrency:
+  group: publicar-uniaccess
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Compilar portales
+        run: npm run build
+
+      - name: Preparar llave SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/deploy
+          chmod 600 ~/.ssh/deploy
+          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Copiar al servidor
+        run: |
+          rsync -az --delete \
+            --exclude '.git' --exclude 'node_modules' --exclude '.env' \
+            --exclude 'server/data' --exclude '.claude' \
+            -e "ssh -i ~/.ssh/deploy" \
+            ./ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/equipo03/uniaccess/"
+
+      - name: Instalar y reiniciar
+        run: |
+          ssh -i ~/.ssh/deploy "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+            'cd /home/equipo03/uniaccess && npm ci --no-audit --no-fund && sudo systemctl restart uniaccess'
