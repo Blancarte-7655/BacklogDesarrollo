@@ -284,3 +284,13 @@ describe('Reporte de Excel y demostración', () => {
     assert.ok(one('SELECT 1 FROM people WHERE id = ?', real.id));
   });
 });
+
+describe('Simulador de pantalla', () => {
+  test('la pantalla acepta el PIN vigente y rechaza otro', async () => {
+    const { verifyDisplayPin } = await import('../src/services/displays.ts');
+    const room = stations.createRoom({ name: 'Aula Pantalla', building: 'B', kind: 'salon', hasDisplay: true, stations: 0 });
+    const pin = allDisplayPins().find(p => p.roomId === room.id)!.pin;
+    assert.equal(verifyDisplayPin(room.id, pin), true);
+    assert.equal(verifyDisplayPin(room.id, pin === '000000' ? '111111' : '000000'), false);
+  });
+});

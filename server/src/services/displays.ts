@@ -1,9 +1,10 @@
-import { createHmac, randomBytes } from 'node:crypto';
+import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import type { DisplayPin } from '../../../shared/contracts.ts';
 import { timeToMinutes } from '../../../shared/campus.ts';
 import { one, run } from '../db/index.ts';
+import { notFound } from '../lib/http.ts';
 import { currentClassInRoom, scheduleFor } from './schedule.ts';
-import { listRooms } from './stations.ts';
+import { getRoom, listRooms } from './stations.ts';
 
 /**
  * PIN de las pantallas de los salones. Cambia en cada clase (o cada hora si no hay clase) y
@@ -68,4 +69,26 @@ export function teacherDisplayPins(personId: string, now = new Date()): DisplayP
   return listRooms()
     .filter(r => r.hasDisplay && rooms.has(r.name))
     .map(r => displayPin(r, now));
+}
+
+/** Lo que muestra la pantalla del salón antes de conectarse (sin revelar el PIN) */
+export function displayInfo(roomId: string, now = new Date()) {
+  const room = getRoom(roomId);
+  if (!room.hasDisplay) throw notFound('Este salón no tiene pantalla registrada.');
+  const { lesson, end } = currentBlock(room.name, now);
+  return {
+    roomName: room.name,
+    building: room.building,
+    validUntil: end.toISOString(),
+    currentClass: lesson ? { subject: lesson.subject, teacher: lesson.teacher, group: lesson.group } : null,
+  };
+}
+
+/** Simula lo que haría la pantalla: compara el PIN escrito con el del bloque actual */
+export function verifyDisplayPin(roomId: string, pin: string, now = new Date()): boolean {
+  const room = getRoom(roomId);
+  const { start } = currentBlock(room.name, now);
+  const expected = Buffer.from(pinFor(room.id, start));
+  const given = Buffer.from(pin.padEnd(6, ' ').slice(0, 6));
+  return timingSafeEqual(expected, given);
 }

@@ -10,9 +10,9 @@ import { errorHandler, requireJsonBody } from './lib/http.ts';
 import { requirePerson, requireStaff } from './middleware/auth.ts';
 import { authRouter } from './routes/auth.ts';
 import { personRouter } from './routes/person.ts';
+import { publicRouter } from './routes/public.ts';
 import { staffRouter } from './routes/staff/index.ts';
 import { closeStaleRecords } from './services/access.ts';
-import { publicInvitation } from './services/invitations.ts';
 import { generateScheduledNotifications } from './services/notifications.ts';
 import { closeStaleSessions } from './services/stations.ts';
 
@@ -27,17 +27,14 @@ app.use((_req, res, next) => {
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',
     'Referrer-Policy': 'same-origin',
-    'Permissions-Policy': 'geolocation=(self), publickey-credentials-get=(self), publickey-credentials-create=(self)',
+    'Permissions-Policy': 'geolocation=(self), publickey-credentials-get=(self), publickey-credentials-create=(self), camera=(self)',
   });
   next();
 });
 
 app.use('/api', express.json({ limit: '1mb' }), requireJsonBody);
 app.use('/api/auth', authRouter);
-// Liga pública que recibe el invitado (el token es largo y aleatorio)
-app.get('/api/public/invitations/:token', (req, res) => {
-  res.json(publicInvitation(req.params.token));
-});
+app.use('/api/public', publicRouter);
 app.use('/api/person', requirePerson, personRouter);
 app.use('/api/staff', requireStaff, staffRouter);
 app.use('/api', (_req, res) => {
