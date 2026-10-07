@@ -3,6 +3,15 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import AccessPoints from './pages/AccessPoints';
 import Alerts from './pages/Alerts';
 import Dashboard from './pages/Dashboard';
+import Demo from './pages/Demo';
+import Displays from './pages/Displays';
+import Emergency from './pages/Emergency';
+import InvitationCheck from './pages/InvitationCheck';
+import Invitations from './pages/Invitations';
+import LabDetail from './pages/LabDetail';
+import LabLabels from './pages/LabLabels';
+import Labs from './pages/Labs';
+import Reports from './pages/Reports';
 import Guests from './pages/Guests';
 import Network from './pages/Network';
 import StaffLogin from './pages/Login';
@@ -33,6 +42,22 @@ export default function StaffPortal() {
           <Route path="registros" element={<Records />} />
           <Route path="invitados" element={<Guests />} />
           <Route path="alertas" element={<Alerts />} />
+          <Route path="invitaciones" element={<Invitations />} />
+          <Route path="invitaciones/:code" element={<InvitationCheck />} />
+          <Route path="laboratorios" element={<Labs />} />
+          <Route path="laboratorios/:id" element={<LabDetail />} />
+          <Route path="laboratorios/:id/etiquetas" element={<LabLabels />} />
+          <Route path="pantallas" element={<Displays />} />
+          <Route path="emergencia" element={<Emergency />} />
+          <Route path="reportes" element={<Reports />} />
+          <Route
+            path="demo"
+            element={
+              <AdminOnly>
+                <Demo />
+              </AdminOnly>
+            }
+          />
           <Route
             path="personas"
             element={

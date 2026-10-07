@@ -6,6 +6,16 @@ import type {
   AdminDashboard,
   AdminMeta,
   Alert,
+  DemoStatus,
+  DisplayPin,
+  EmergencyKind,
+  EmergencyState,
+  Invitation,
+  Room,
+  RoomDetail,
+  RoomInput,
+  Station,
+  StationIncident,
   AlertSummary,
   GeneratedPassword,
   GuestPass,
@@ -86,4 +96,36 @@ export const staffApi = {
   setOperatorActive: (id: string, active: boolean) => api<StaffProfile>(`/staff/staff/${id}/status`, { method: 'PATCH', body: { active } }),
   resetOperatorPassword: (id: string) => api<GeneratedPassword>(`/staff/staff/${id}/password`, { method: 'POST' }),
   emailOperator: (id: string, subject: string, body: string) => api<MailResult>(`/staff/staff/${id}/email`, { body: { subject, body } }),
+
+  acceptPrivacy: () => api<null>('/staff/privacy/accept', { method: 'POST' }),
+
+  invitations: (date?: string) => api<Invitation[]>(`/staff/invitations${query({ date })}`),
+  invitation: (code: string) => api<Invitation>(`/staff/invitations/${encodeURIComponent(code)}`),
+  admitInvitation: (code: string) => api<{ invitation: Invitation; pass: GuestPass }>(`/staff/invitations/${encodeURIComponent(code)}/admit`, { method: 'POST' }),
+
+  rooms: () => api<Room[]>('/staff/rooms'),
+  room: (id: string) => api<RoomDetail>(`/staff/rooms/${id}`),
+  createRoom: (input: RoomInput) => api<Room>('/staff/rooms', { body: input }),
+  deleteRoom: (id: string) => api<null>(`/staff/rooms/${id}`, { method: 'DELETE' }),
+  setStationService: (id: string, inService: boolean) => api<Station>(`/staff/stations/${id}/service`, { body: { inService } }),
+  reportStationIncident: (id: string, description: string) => api<StationIncident>(`/staff/stations/${id}/incidents`, { body: { description } }),
+  resolveStationIncident: (id: string) => api<null>(`/staff/station-incidents/${id}/resolve`, { method: 'POST' }),
+  endStationSession: (id: string) => api<null>(`/staff/station-sessions/${id}/end`, { method: 'POST' }),
+
+  displays: () => api<DisplayPin[]>('/staff/displays'),
+
+  emergency: () => api<EmergencyState>('/staff/emergency'),
+  startEmergency: (kind: EmergencyKind) => api<EmergencyState>('/staff/emergency/start', { body: { kind } }),
+  toggleSafe: (recordId: string) => api<EmergencyState>(`/staff/emergency/${recordId}/safe`, { method: 'POST' }),
+  endEmergency: () => api<EmergencyState>('/staff/emergency/end', { method: 'POST' }),
+
+  demo: () => api<DemoInfo>('/staff/demo'),
+  loadDemo: () => api<DemoInfo>('/staff/demo/load', { method: 'POST' }),
+  clearDemo: () => api<DemoInfo>('/staff/demo/clear', { method: 'POST' }),
 };
+
+export interface DemoInfo extends DemoStatus {
+  password: string;
+  teacherCode: string;
+  studentCode: string;
+}

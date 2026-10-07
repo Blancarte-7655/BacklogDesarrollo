@@ -1,4 +1,26 @@
-import { Bell, ClipboardList, DoorOpen, LayoutDashboard, Mail, MailWarning, Menu, ShieldCheck, UserRoundPlus, Users, UsersRound, Wifi, X, type LucideIcon } from 'lucide-react';
+import {
+  Bell,
+  CircleHelp,
+  ClipboardList,
+  DoorOpen,
+  FileSpreadsheet,
+  FlaskConical,
+  LayoutDashboard,
+  Mail,
+  MailWarning,
+  Menu,
+  QrCode,
+  ShieldCheck,
+  Siren,
+  Sparkles,
+  Tv,
+  UserRoundPlus,
+  Users,
+  UsersRound,
+  Wifi,
+  X,
+  type LucideIcon,
+} from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -6,6 +28,7 @@ import { Ambient } from '../../brand/Ambient';
 import { Wordmark } from '../../brand/Logo';
 import { useAsync } from '../../hooks/useAsync';
 import { STAFF_ROLE_LABELS } from '../../../shared/rules';
+import { PrivacyConsent } from '../../ui/PrivacyConsent';
 import { ReadingPreferences } from '../../ui/ReadingPreferences';
 import { UserMenu } from '../../ui/UserMenu';
 import { staffApi } from './api';
@@ -28,6 +51,8 @@ export default function StaffLayout() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const alerts = useAsync(() => staffApi.alertSummary(), [], { pollMs: 30_000 });
   const meta = useAsync(() => staffApi.meta(), []);
+  const emergency = useAsync(() => staffApi.emergency(), [], { pollMs: 30_000 });
+  const [privacyAccepted, setPrivacyAccepted] = useState(staff.privacyAccepted !== false);
 
   const handleSignOut = async () => {
     await signOut();
@@ -40,8 +65,18 @@ export default function StaffLayout() {
       items: [
         { to: '/control', label: 'Tablero', icon: LayoutDashboard, end: true },
         { to: '/control/registros', label: 'Registros', icon: ClipboardList },
-        { to: '/control/invitados', label: 'Invitados', icon: UsersRound },
+        { to: '/control/invitados', label: 'Pases de invitado', icon: UsersRound },
+        { to: '/control/invitaciones', label: 'Invitaciones QR', icon: QrCode },
         { to: '/control/alertas', label: 'Alertas', icon: Bell, badge: alerts.data?.unread },
+      ],
+    },
+    {
+      title: 'Campus',
+      items: [
+        { to: '/control/laboratorios', label: 'Laboratorios', icon: FlaskConical },
+        { to: '/control/pantallas', label: 'Pantallas con PIN', icon: Tv },
+        { to: '/control/emergencia', label: 'Emergencia', icon: Siren, badge: emergency.data?.event ? emergency.data.total - emergency.data.safe : undefined },
+        { to: '/control/reportes', label: 'Reportes', icon: FileSpreadsheet },
       ],
     },
     ...(staff.role === 'admin'
@@ -53,6 +88,7 @@ export default function StaffLayout() {
               { to: '/control/accesos', label: 'Accesos', icon: DoorOpen },
               { to: '/control/operadores', label: 'Operadores', icon: ShieldCheck },
               { to: '/control/redes', label: 'Redes permitidas', icon: Wifi },
+              { to: '/control/demo', label: 'Demostración', icon: Sparkles },
             ],
           },
         ]
@@ -138,6 +174,14 @@ export default function StaffLayout() {
           {meta.data?.smtpConfigured ? 'Correo saliente activo' : 'Correo en modo local'}
         </p>
         <p className="mt-1">{STAFF_ROLE_LABELS[staff.role]}{staff.area ? ` · ${staff.area}` : ''}</p>
+        <p className="mt-2 flex gap-3">
+          <Link to="/ayuda?rol=vigilancia" target="_blank" className="font-semibold hover:text-verde-700">
+            Manual
+          </Link>
+          <Link to="/privacidad" target="_blank" className="font-semibold hover:text-verde-700">
+            Privacidad
+          </Link>
+        </p>
       </div>
     </div>
   );
@@ -147,7 +191,7 @@ export default function StaffLayout() {
       <a href="#contenido" className="skip-link">
         Saltar al contenido
       </a>
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-68 border-r border-stone-200 bg-surface lg:block">{sidebar}</aside>
+      <aside className="no-print fixed inset-y-0 left-0 z-30 hidden w-68 border-r border-stone-200 bg-surface lg:block">{sidebar}</aside>
 
       <AnimatePresence>
         {drawerOpen && (
@@ -174,8 +218,8 @@ export default function StaffLayout() {
         )}
       </AnimatePresence>
 
-      <div className="lg:pl-68">
-        <header className="sticky top-0 z-20 border-b border-stone-200 bg-surface/95 backdrop-blur">
+      <div className="lg:pl-68 print:pl-0">
+        <header className="no-print sticky top-0 z-20 border-b border-stone-200 bg-surface/95 backdrop-blur">
           <div className="flex h-16 items-center justify-between gap-3 px-4 sm:px-8">
             <div className="flex items-center gap-3">
               <button type="button" onClick={() => setDrawerOpen(true)} className="rounded-lg p-2 text-stone-600 hover:bg-stone-100 lg:hidden" aria-label="Abrir menú">
@@ -194,19 +238,42 @@ export default function StaffLayout() {
               name={staff.fullName}
               role={STAFF_ROLE_LABELS[staff.role]}
               detail={staff.email}
-              links={staff.role === 'admin' ? [{ to: '/control/operadores', label: 'Operadores', icon: ShieldCheck }] : []}
+              links={[
+                ...(staff.role === 'admin' ? [{ to: '/control/operadores', label: 'Operadores', icon: ShieldCheck }] : []),
+                { to: '/ayuda?rol=vigilancia', label: 'Manual de usuario', icon: CircleHelp },
+              ]}
               onSignOut={handleSignOut}
             />
             </div>
           </div>
         </header>
 
+        {emergency.data?.event && location.pathname !== '/control/emergencia' && (
+          <Link
+            to="/control/emergencia"
+            className={`no-print flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-white ${emergency.data.event.kind === 'emergencia' ? 'bg-[#b42318]' : 'bg-[#b45309]'}`}
+          >
+            <Siren className="size-4 animate-pulse" />
+            {emergency.data.event.kind === 'emergencia' ? 'Emergencia' : 'Simulacro'} en curso: faltan {emergency.data.total - emergency.data.safe} personas por
+            confirmar. Abrir lista
+          </Link>
+        )}
         <main id="contenido" tabIndex={-1} className="mx-auto max-w-7xl outline-none px-4 py-6 sm:px-8 lg:py-8">
           <motion.div key={location.pathname} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
             <Outlet context={context} />
           </motion.div>
         </main>
       </div>
+
+      <PrivacyConsent
+        audience="staff"
+        open={!privacyAccepted}
+        onAccept={async () => {
+          await staffApi.acceptPrivacy();
+          setPrivacyAccepted(true);
+        }}
+        onSignOut={() => void handleSignOut()}
+      />
     </div>
   );
 }

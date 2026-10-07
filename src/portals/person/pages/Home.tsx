@@ -17,6 +17,7 @@ import { Badge, ErrorState, PageLoader, PulseDot, SectionCard } from '../../../u
 import { useToast } from '../../../ui/toast';
 import { personApi } from '../api';
 import { AccessFlow } from '../components/AccessFlow';
+import { TodayPanel } from '../components/TodayPanel';
 
 export default function PersonHome() {
   const toast = useToast();
@@ -178,6 +179,8 @@ export default function PersonHome() {
           </section>
         )}
       </ClickSpark>
+
+      <TodayPanel role={profile.role} />
 
       <SectionCard
         className="mt-5"
