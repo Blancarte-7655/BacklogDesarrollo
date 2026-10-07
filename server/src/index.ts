@@ -12,6 +12,9 @@ import { authRouter } from './routes/auth.ts';
 import { personRouter } from './routes/person.ts';
 import { staffRouter } from './routes/staff/index.ts';
 import { closeStaleRecords } from './services/access.ts';
+import { publicInvitation } from './services/invitations.ts';
+import { generateScheduledNotifications } from './services/notifications.ts';
+import { closeStaleSessions } from './services/stations.ts';
 
 z.config(z.locales.es());
 
@@ -31,6 +34,10 @@ app.use((_req, res, next) => {
 
 app.use('/api', express.json({ limit: '1mb' }), requireJsonBody);
 app.use('/api/auth', authRouter);
+// Liga pública que recibe el invitado (el token es largo y aleatorio)
+app.get('/api/public/invitations/:token', (req, res) => {
+  res.json(publicInvitation(req.params.token));
+});
 app.use('/api/person', requirePerson, personRouter);
 app.use('/api/staff', requireStaff, staffRouter);
 app.use('/api', (_req, res) => {
@@ -51,6 +58,8 @@ app.use(errorHandler);
 function housekeeping() {
   try {
     closeStaleRecords();
+    closeStaleSessions();
+    generateScheduledNotifications();
     run('DELETE FROM sessions WHERE expires_at < ?', nowIso());
   } catch (error) {
     console.error('Error en tareas programadas:', error);

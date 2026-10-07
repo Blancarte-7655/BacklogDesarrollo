@@ -5,6 +5,8 @@ import { many } from '../../db/index.ts';
 import { smtpConfigured } from '../../lib/mailer.ts';
 import { requireAdmin } from '../../middleware/auth.ts';
 import { listAccessPoints } from '../../services/access.ts';
+import { privacyAccepted } from '../../services/privacy.ts';
+import { campusRouter } from './campus.ts';
 import { operationsRouter } from './operations.ts';
 import { peopleLookupRouter, peopleRouter } from './people.ts';
 import { settingsRouter } from './settings.ts';
@@ -12,7 +14,7 @@ import { settingsRouter } from './settings.ts';
 export const staffRouter = Router();
 
 staffRouter.get('/session', (req, res) => {
-  res.json(req.staff);
+  res.json({ ...req.staff, privacyAccepted: privacyAccepted('staff', req.staff!.id) });
 });
 
 staffRouter.get('/meta', (_req, res) => {
@@ -28,6 +30,7 @@ staffRouter.get('/meta', (_req, res) => {
 // Vigilancia y administración
 staffRouter.use('/people-lookup', peopleLookupRouter);
 staffRouter.use(operationsRouter);
+staffRouter.use(campusRouter);
 
 // Solo administración
 staffRouter.use('/people', requireAdmin, peopleRouter);

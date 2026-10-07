@@ -118,6 +118,116 @@ CREATE TABLE IF NOT EXISTS webauthn_credentials (
   last_used_at  TEXT
 );
 
+-- Horario de clases (alumnos y docentes). Los salones se ligan por nombre.
+CREATE TABLE IF NOT EXISTS schedules (
+  id          TEXT PRIMARY KEY,
+  person_id   TEXT NOT NULL REFERENCES people (id) ON DELETE CASCADE,
+  weekday     INTEGER NOT NULL CHECK (weekday BETWEEN 1 AND 7),
+  start_time  TEXT NOT NULL,
+  end_time    TEXT NOT NULL,
+  subject     TEXT NOT NULL,
+  room        TEXT NOT NULL DEFAULT '',
+  teacher     TEXT NOT NULL DEFAULT '',
+  group_code  TEXT NOT NULL DEFAULT ''
+);
+CREATE INDEX IF NOT EXISTS schedules_person_idx ON schedules (person_id, weekday);
+
+-- Aceptación del aviso de privacidad (por versión)
+CREATE TABLE IF NOT EXISTS privacy_consents (
+  subject_type  TEXT NOT NULL CHECK (subject_type IN ('staff', 'person')),
+  subject_id    TEXT NOT NULL,
+  version       TEXT NOT NULL,
+  accepted_at   TEXT NOT NULL DEFAULT ${NOW},
+  PRIMARY KEY (subject_type, subject_id, version)
+);
+
+-- Avisos para el celular de cada persona
+CREATE TABLE IF NOT EXISTS notifications (
+  id            TEXT PRIMARY KEY,
+  person_id     TEXT NOT NULL REFERENCES people (id) ON DELETE CASCADE,
+  kind          TEXT NOT NULL,
+  title         TEXT NOT NULL,
+  body          TEXT NOT NULL,
+  link          TEXT,
+  dedupe_key    TEXT UNIQUE,
+  read_at       TEXT,
+  created_at    TEXT NOT NULL DEFAULT ${NOW}
+);
+CREATE INDEX IF NOT EXISTS notifications_person_idx ON notifications (person_id, created_at DESC);
+
+-- Invitaciones con código QR que emite un docente o personal para su visitante
+CREATE TABLE IF NOT EXISTS invitations (
+  id               TEXT PRIMARY KEY,
+  code             TEXT NOT NULL UNIQUE,
+  token            TEXT NOT NULL UNIQUE,
+  host_person_id   TEXT REFERENCES people (id) ON DELETE CASCADE,
+  guest_name       TEXT NOT NULL,
+  guest_email      TEXT NOT NULL DEFAULT '',
+  reason           TEXT NOT NULL,
+  visit_date       TEXT NOT NULL,
+  access_point_id  TEXT REFERENCES access_points (id) ON DELETE SET NULL,
+  status           TEXT NOT NULL DEFAULT 'pendiente' CHECK (status IN ('pendiente', 'usada', 'cancelada')),
+  guest_pass_id    TEXT REFERENCES guest_passes (id) ON DELETE SET NULL,
+  used_at          TEXT,
+  created_at       TEXT NOT NULL DEFAULT ${NOW}
+);
+
+-- Laboratorios y salones, con sus equipos (cada equipo lleva un QR pegado)
+CREATE TABLE IF NOT EXISTS rooms (
+  id           TEXT PRIMARY KEY,
+  name         TEXT NOT NULL UNIQUE,
+  building     TEXT NOT NULL DEFAULT '',
+  kind         TEXT NOT NULL CHECK (kind IN ('laboratorio', 'salon')),
+  has_display  INTEGER NOT NULL DEFAULT 1,
+  created_at   TEXT NOT NULL DEFAULT ${NOW}
+);
+
+CREATE TABLE IF NOT EXISTS stations (
+  id          TEXT PRIMARY KEY,
+  room_id     TEXT NOT NULL REFERENCES rooms (id) ON DELETE CASCADE,
+  label       TEXT NOT NULL,
+  code        TEXT NOT NULL UNIQUE,
+  in_service  INTEGER NOT NULL DEFAULT 1,
+  UNIQUE (room_id, label)
+);
+
+CREATE TABLE IF NOT EXISTS station_sessions (
+  id          TEXT PRIMARY KEY,
+  station_id  TEXT NOT NULL REFERENCES stations (id) ON DELETE CASCADE,
+  person_id   TEXT NOT NULL REFERENCES people (id) ON DELETE CASCADE,
+  started_at  TEXT NOT NULL,
+  ended_at    TEXT,
+  ended_by    TEXT NOT NULL DEFAULT ''
+);
+CREATE INDEX IF NOT EXISTS station_sessions_open_idx ON station_sessions (ended_at, station_id);
+
+CREATE TABLE IF NOT EXISTS station_incidents (
+  id           TEXT PRIMARY KEY,
+  station_id   TEXT NOT NULL REFERENCES stations (id) ON DELETE CASCADE,
+  person_id    TEXT REFERENCES people (id) ON DELETE SET NULL,
+  description  TEXT NOT NULL,
+  reported_by  TEXT NOT NULL,
+  resolved_at  TEXT,
+  created_at   TEXT NOT NULL DEFAULT ${NOW}
+);
+
+-- Emergencias y simulacros: quién estaba dentro y quién ya está a salvo
+CREATE TABLE IF NOT EXISTS emergency_events (
+  id          TEXT PRIMARY KEY,
+  kind        TEXT NOT NULL CHECK (kind IN ('simulacro', 'emergencia')),
+  started_by  TEXT NOT NULL,
+  started_at  TEXT NOT NULL DEFAULT ${NOW},
+  ended_at    TEXT
+);
+
+CREATE TABLE IF NOT EXISTS emergency_marks (
+  event_id   TEXT NOT NULL REFERENCES emergency_events (id) ON DELETE CASCADE,
+  record_id  TEXT NOT NULL,
+  marked_by  TEXT NOT NULL,
+  marked_at  TEXT NOT NULL DEFAULT ${NOW},
+  PRIMARY KEY (event_id, record_id)
+);
+
 -- Configuración del sistema (por ejemplo, redes permitidas)
 CREATE TABLE IF NOT EXISTS settings (
   key         TEXT PRIMARY KEY,

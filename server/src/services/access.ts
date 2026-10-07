@@ -19,6 +19,7 @@ import { dateKey, minutesBetween, todayBounds } from '../lib/dates.ts';
 import { raiseAlert } from './alerts.ts';
 import { campusNetworks, ipAllowed, normalizeIp } from './network.ts';
 import { personCredentialValid, type PersonRow } from './people.ts';
+import { endPersonSession } from './stations.ts';
 import { verifyBiometric } from './webauthn.ts';
 
 /** Una entrada se considera abierta durante 18 horas; después es una incidencia */
@@ -248,8 +249,9 @@ export async function registerAccess(person: PersonRow, input: CheckInput): Prom
     };
   }
 
-  // 7. Salida
+  // 7. Salida (también termina el uso de un equipo de laboratorio, si lo había)
   if (open) {
+    endPersonSession(person.id, 'salida del campus');
     run('UPDATE access_records SET check_out = ?, geo = COALESCE(geo, ?), biometric = ?, updated_at = ? WHERE id = ?', timestamp, geo, bool(!!input.biometric), timestamp, open.id);
     return {
       direction: 'out',

@@ -84,6 +84,8 @@ export interface PersonSession {
   fullName: string;
   email: string;
   role: PersonRole;
+  /** Si ya aceptó la versión vigente del aviso de privacidad */
+  privacyAccepted?: boolean;
 }
 
 /* ---------- Operadores ---------- */
@@ -97,6 +99,8 @@ export interface StaffProfile {
   active: boolean;
   createdAt: string;
   lastLoginAt: string | null;
+  /** Si ya aceptó la versión vigente del aviso de privacidad */
+  privacyAccepted?: boolean;
 }
 
 export interface StaffListItem extends StaffProfile {
@@ -317,4 +321,195 @@ export interface GeneratedPassword {
 export interface MailResult {
   delivered: boolean;
   mode: 'smtp' | 'outbox';
+}
+
+/* ---------- Horario ---------- */
+
+export interface ClassSession {
+  /** 1 = lunes … 7 = domingo */
+  weekday: number;
+  start: string;
+  end: string;
+  subject: string;
+  room: string;
+  teacher: string;
+  group: string;
+}
+
+export interface ScheduleOverview {
+  classes: ClassSession[];
+  current: ClassSession | null;
+  next: (ClassSession & { startsInMinutes: number }) | null;
+  /** true si es el horario ficticio de demostración (sin datos de Control Escolar) */
+  isDemo: boolean;
+}
+
+/* ---------- Avisos ---------- */
+
+export type NotificationKind =
+  | 'invitado_llego'
+  | 'olvidaste_salida'
+  | 'credencial_por_vencer'
+  | 'dispositivo_vinculado'
+  | 'equipo'
+  | 'emergencia'
+  | 'general';
+
+export interface AppNotification {
+  id: string;
+  kind: NotificationKind;
+  title: string;
+  body: string;
+  link: string | null;
+  createdAt: string;
+  readAt: string | null;
+}
+
+/* ---------- Invitaciones con QR ---------- */
+
+export type InvitationStatus = 'pendiente' | 'usada' | 'cancelada' | 'vencida';
+
+export interface Invitation {
+  id: string;
+  code: string;
+  token: string;
+  guestName: string;
+  guestEmail: string;
+  reason: string;
+  visitDate: string;
+  accessPointId: string | null;
+  accessPointName: string;
+  hostName: string;
+  status: InvitationStatus;
+  createdAt: string;
+  usedAt: string | null;
+}
+
+export interface InvitationInput {
+  guestName: string;
+  guestEmail: string;
+  reason: string;
+  visitDate: string;
+  accessPointId: string;
+}
+
+/** Lo que ve el invitado en la liga pública de su invitación */
+export interface PublicInvitation {
+  code: string;
+  guestName: string;
+  hostName: string;
+  visitDate: string;
+  accessPointName: string;
+  status: InvitationStatus;
+  checkUrl: string;
+}
+
+/* ---------- Laboratorios, salones y equipos ---------- */
+
+export type RoomKind = 'laboratorio' | 'salon';
+
+export interface Room {
+  id: string;
+  name: string;
+  building: string;
+  kind: RoomKind;
+  hasDisplay: boolean;
+  stations: number;
+  occupied: number;
+  openIncidents: number;
+}
+
+export interface RoomInput {
+  name: string;
+  building: string;
+  kind: RoomKind;
+  hasDisplay: boolean;
+  stations: number;
+}
+
+export interface Station {
+  id: string;
+  roomId: string;
+  roomName: string;
+  label: string;
+  code: string;
+  inService: boolean;
+  occupant: { sessionId: string; personId: string; name: string; code: string; since: string } | null;
+  openIncidents: number;
+}
+
+export interface StationSession {
+  id: string;
+  stationId: string;
+  stationLabel: string;
+  roomName: string;
+  personId: string;
+  personName: string;
+  personCode: string;
+  startedAt: string;
+  endedAt: string | null;
+  minutes: number;
+}
+
+export interface StationIncident {
+  id: string;
+  stationId: string;
+  stationLabel: string;
+  roomName: string;
+  personName: string | null;
+  personCode: string | null;
+  description: string;
+  reportedBy: string;
+  createdAt: string;
+  resolvedAt: string | null;
+}
+
+export interface RoomDetail {
+  room: Room;
+  stations: Station[];
+  recentSessions: StationSession[];
+  incidents: StationIncident[];
+}
+
+/* ---------- Pantallas con PIN ---------- */
+
+export interface DisplayPin {
+  roomId: string;
+  roomName: string;
+  building: string;
+  pin: string;
+  validUntil: string;
+  currentClass: { subject: string; teacher: string; group: string } | null;
+}
+
+/* ---------- Emergencias y simulacros ---------- */
+
+export type EmergencyKind = 'simulacro' | 'emergencia';
+
+export interface EmergencyPerson {
+  recordId: string;
+  name: string;
+  code: string;
+  role: PersonRole | 'invitado';
+  accessPointName: string;
+  checkIn: string;
+  safe: boolean;
+  markedAt: string | null;
+}
+
+export interface EmergencyState {
+  event: { id: string; kind: EmergencyKind; startedAt: string; startedBy: string; endedAt: string | null } | null;
+  people: EmergencyPerson[];
+  total: number;
+  safe: number;
+}
+
+/* ---------- Modo de demostración ---------- */
+
+export interface DemoStatus {
+  active: boolean;
+  people: number;
+  records: number;
+  rooms: number;
+  invitations: number;
 }
