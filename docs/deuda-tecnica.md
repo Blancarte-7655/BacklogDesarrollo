@@ -15,6 +15,9 @@ tiene prioridad, impacto, una solución propuesta y un esfuerzo estimado (S, M, 
 | DT-04 | Sin pruebas de interfaz ni de extremo a extremo | 🟠 Media | M | Pendiente |
 | DT-05 | `node:sqlite` aún experimental | 🟢 Baja | S | En observación |
 | DT-06 | Avisos de lint en componentes de animación copiados | 🟢 Baja | S | Pendiente |
+| DT-07 | Avisos por consulta periódica, sin push real | 🟠 Media | M | Pendiente |
+| DT-08 | Horario y PIN de pantallas sin integración real | 🟠 Media | L | Simulado en la demo |
+| DT-09 | Sin mapa del campus | 🟢 Baja | M | Backlog |
 
 ---
 
@@ -82,6 +85,38 @@ tiene prioridad, impacto, una solución propuesta y un esfuerzo estimado (S, M, 
 - **Solución propuesta:** mover las asignaciones de refs a `useEffect`, derivar estados en el
   render y dejar el lint sin avisos para que los nuevos se noten.
 - **Esfuerzo:** S.
+
+## DT-07 · Avisos por consulta periódica, sin push real 🟠
+
+- **Dónde:** `src/portals/person/components/useNotificationFeed.ts`, `src/lib/deviceNotifications.ts`, `public/sw.js`.
+- **Atajo:** el portal consulta los avisos cada 30 s y los muestra con la API de notificaciones del
+  navegador. No se usó Web Push porque requiere llaves VAPID, guardar suscripciones y una librería de
+  envío ([ADR 0005](adr/0005-qr-excel-y-avisos-sin-dependencias.md)).
+- **Impacto:** el aviso solo llega si UniAccess está abierto o en segundo plano reciente; con el navegador
+  cerrado no llega. En iPhone requiere agregar la app a la pantalla de inicio.
+- **Solución propuesta:** generar llaves VAPID, guardar la suscripción de cada dispositivo y enviar con
+  `web-push` desde `notify()`; mantener la consulta periódica como respaldo.
+- **Esfuerzo:** M.
+
+## DT-08 · Horario y PIN de pantallas sin integración real 🟠
+
+- **Dónde:** `server/src/services/schedule.ts`, `server/src/services/displays.ts`, `src/pages/DisplaySimulator.tsx`.
+- **Atajo:** sin acceso a los sistemas de la Universidad, el horario es ficticio (7.º de Informática) y la
+  pantalla del salón se simula en `/pantalla/:id`.
+- **Impacto:** en la demo funciona de punta a punta, pero en un salón real la pantalla no pide el PIN.
+- **Solución propuesta:** importar horarios desde Control Escolar (archivo o API) con `saveSchedule()`;
+  para las pantallas, un pequeño agente en el transmisor (o una página de inicio en la pantalla) que
+  consulte `POST /api/public/displays/:id/connect` antes de aceptar la conexión. Requiere al área de sistemas.
+- **Esfuerzo:** L.
+
+## DT-09 · Sin mapa del campus 🟢
+
+- **Dónde:** no existe todavía.
+- **Atajo:** se pospuso hasta tener el plano oficial del centro.
+- **Impacto:** los visitantes no tienen guía para llegar al salón o laboratorio.
+- **Solución propuesta:** plano SVG del CUTlaquepaque con edificios como zonas clicables, ligado a los
+  salones de `rooms` (y al horario para "¿dónde es mi siguiente clase?").
+- **Esfuerzo:** M.
 
 ---
 

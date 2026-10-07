@@ -43,6 +43,9 @@ Two separate portals, each with its own session:
 - **Traffic charts**: today by hour, day by day, by person type, by gate and denied attempts, each also available as a table.
 - **Reading preferences** on every screen: light or dark theme, text size and animations. Body text uses Atkinson Hyperlegible, a typeface designed for low-vision readers.
 - **Live dashboard** of who is on campus, **guest passes**, **manual fallback check-in**, alerts, history with CSV export, and administration of people, gates and operators.
+- **My schedule** (current and next class), **lab workstation tracking** via QR stickers, **QR guest invitations**, **classroom display PINs** that rotate every class, **phone notifications**, an **emergency roll call** and **Excel reports** (10 sheets).
+- Public **privacy notice** (`/privacidad`, accepted on first sign-in) and an interactive **user manual** (`/ayuda`).
+- **Demo mode**: load and remove sample data (20 people, two weeks of records, labs, invitations) without touching real data.
 
 ---
 
@@ -72,6 +75,8 @@ On first run the server creates the **initial admin** from `.env` and three samp
 4. Go to http://localhost:5190/acceso, sign in as that student and check in.
 5. Watch the record appear on the live dashboard.
 
+For the full demo, open **Demostración** as admin and load the sample data. Test accounts (password `Demo-2026`): teacher `990000001`, student `990000002`.
+
 ---
 
 ## Tech stack
@@ -88,7 +93,7 @@ On first run the server creates the **initial admin** from `.env` and three samp
 
 ## Known limitations
 
-- Traffic charts exist, but downloadable reports for management (user story 10) are not built yet.
+- Schedules and classroom displays are simulated until connected to the university systems; notifications arrive while the app is open or recently backgrounded (no Web Push yet); campus map is in the backlog.
 - Location is reported by the phone and can be spoofed; the geofence is a deterrent, not a guarantee.
 - Rate limiting and WebAuthn challenges are in memory (reset on restart, single instance only).
 - Run `npm test` for the automated tests of the access rules.

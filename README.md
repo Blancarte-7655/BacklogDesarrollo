@@ -67,6 +67,11 @@ La plataforma tiene **dos portales separados**, cada uno con su propia sesión:
 - Rechaza y **alerta a vigilancia** si la credencial venció, está dada de baja, el rol no puede usar ese acceso o la persona está fuera del área o de la red.
 - Salida sin entrada previa: se registra y queda como **incidencia**. Salida repetida: avisa y no la duplica.
 - Historial personal con filtros y descarga en CSV.
+- **Mi horario**: clase en curso, la siguiente y la semana completa (ficticio mientras no haya conexión con Control Escolar).
+- **Uso de equipos del laboratorio**: se escanea la etiqueta QR de la computadora y queda a nombre de la persona; puede reportar fallas antes de usarla.
+- **Invitados con QR** (docentes y personal): el invitado recibe una liga con su QR y el anfitrión un aviso cuando llega.
+- **PIN de la pantalla del salón** (docentes): cambia en cada clase para que nadie más se conecte.
+- **Avisos en el celular**: credencial por vencer, salida olvidada, invitado que llegó, emergencias.
 
 ### Portal institucional
 - **Tablero en vivo** de quién está dentro, con búsqueda y filtro por rol (se actualiza cada 15 s).
@@ -75,7 +80,17 @@ La plataforma tiene **dos portales separados**, cada uno con su propia sesión:
 - **Registro manual** de respaldo cuando el teléfono de la persona no puede registrar.
 - **Alertas** de accesos denegados e incidencias.
 - **Historial** con filtros y exportación a CSV.
+- **Invitaciones QR**: se escanea el QR del invitado y con un toque se emite su pase y se registra su entrada.
+- **Laboratorios**: mapa de equipos con quién usa cada uno, incidencias ligadas al último usuario, equipos fuera de servicio y etiquetas QR imprimibles.
+- **Pantallas con PIN** y un simulador de la pantalla del salón (`/pantalla/:id`).
+- **Lista de emergencia**: simulacro o emergencia, aviso a quienes están dentro y pase de lista en el punto de reunión.
+- **Reportes en Excel** con 10 hojas (registros, por día, por hora, por acceso, alertas, invitados y uso de equipos).
 - **Administración** de personas (con resumen gráfico), accesos (roles permitidos y geocerca), operadores y **redes permitidas** (WiFi del campus y computadoras de la caseta).
+- **Modo de demostración**: carga y borra datos de ejemplo sin tocar los reales.
+
+### Páginas públicas
+- **Aviso de privacidad** (`/privacidad`): se acepta obligatoriamente en el primer ingreso.
+- **Manual de usuario interactivo** (`/ayuda`): guías paso a paso por tipo de usuario, buscador y preguntas frecuentes.
 
 ### Accesibilidad e inclusión
 - Botón **Lectura** en todas las pantallas: tema claro u oscuro, tamaño de texto (normal, grande, muy grande) y animaciones (según el sistema, reducidas o completas).
@@ -126,7 +141,7 @@ La primera vez, el servidor crea el **administrador inicial** con los datos de `
 | `npm start` | Servidor de producción (API + portales compilados) |
 | `npm run typecheck` | Revisión de tipos con TypeScript |
 | `npm run lint` | Revisión de estilo con oxlint |
-| `npm test` | Pruebas automatizadas de las reglas de acceso (ver [casos de prueba](docs/CASOS_DE_PRUEBA.md)) |
+| `npm test` | Pruebas automatizadas de acceso, red y funciones del campus (ver [casos de prueba](docs/CASOS_DE_PRUEBA.md)) |
 
 ---
 
@@ -143,6 +158,19 @@ La primera vez, el servidor crea el **administrador inicial** con los datos de `
 5. Registra una **entrada** y revisa cómo aparece en el **tablero en vivo** del portal institucional.
 
 > Para probar la biometría real en el celular se necesita HTTPS (ver [Producción](#producción)).
+
+### Demo completa con datos de ejemplo
+
+1. Con el administrador, abre **Demostración** (menú de Administración) y toca **Cargar datos de ejemplo**.
+2. Se crean 20 personas ficticias, dos semanas de accesos, dos laboratorios con equipos en uso, incidencias, invitaciones para hoy y avisos.
+3. Cuentas de prueba del portal de acceso (contraseña `Demo-2026`):
+
+   | Cuenta | Código | Para mostrar |
+   | --- | --- | --- |
+   | Docente · Ricardo Salas Ponce | `990000001` | PIN de pantallas, invitados con QR, horario |
+   | Alumna · Valeria Cruz Medina | `990000002` | Horario, equipo del laboratorio, avisos |
+
+4. La página **Demostración** incluye un recorrido sugerido para presentar. Al terminar, **Borrar demostración** elimina solo los datos de ejemplo.
 
 ---
 
@@ -219,7 +247,7 @@ src/
 
 ## Privacidad de datos
 
-En apego a la *Ley Federal de Protección de Datos Personales en Posesión de los Particulares*:
+Como la Universidad de Guadalajara es una institución pública, aplica la *Ley de Protección de Datos Personales en Posesión de Sujetos Obligados del Estado de Jalisco y sus Municipios* (y la ley general equivalente), no la ley para particulares. El aviso completo está en la app, en [`/privacidad`](src/pages/Privacy.tsx), y se acepta en el primer ingreso.
 
 | Dato | ¿Se guarda? | Para qué |
 | --- | --- | --- |
@@ -227,8 +255,10 @@ En apego a la *Ley Federal de Protección de Datos Personales en Posesión de lo
 | Fecha y hora de entrada/salida | Sí | Historial de acceso |
 | Ubicación al registrar (si hay geocerca) | Sí, en el registro | Validar que la persona estaba en el acceso |
 | Huella o rostro | **No** | La verificación ocurre en el teléfono; el servidor solo recibe una firma |
+| Equipo de laboratorio usado y horario | Sí | Ligar daños o mal uso a quien usaba el equipo |
+| Invitados (nombre, motivo, correo opcional) | Sí, 90 días | Validar su entrada y avisar al anfitrión |
 
-<!-- TODO: enlazar el aviso de privacidad y definir cuánto tiempo se conservan los registros -->
+Los registros de acceso y uso de equipos se conservan durante el ciclo escolar y hasta un año después (propuesta del aviso; debe validarla la Unidad de Transparencia).
 
 ---
 
@@ -237,7 +267,9 @@ En apego a la *Ley Federal de Protección de Datos Personales en Posesión de lo
 Decisiones conscientes de esta versión. El detalle, la prioridad y la solución propuesta de cada una
 están en el [registro de deuda técnica](docs/deuda-tecnica.md).
 
-- **Reportes de afluencia** (historia 10): hay gráficas en el tablero, pero aún no reportes descargables por periodo para directivos.
+- **Horario y pantallas simulados**: sin conexión con Control Escolar ni con las pantallas de los salones, el horario es ficticio y la pantalla se simula ([DT-08](docs/deuda-tecnica.md)).
+- **Avisos**: llegan mientras UniAccess está abierto o en segundo plano; con el navegador cerrado no ([DT-07](docs/deuda-tecnica.md)).
+- **Mapa del campus**: pendiente hasta contar con el plano oficial ([DT-09](docs/deuda-tecnica.md)).
 - La **ubicación la reporta el teléfono**, por lo que puede falsificarse; la geocerca es una barrera, no una garantía. Por eso existe la restricción opcional por red del campus.
 - La restricción por red depende de que el servidor vea la IP real: detrás de un proxy hay que configurar `trust proxy` en `server/src/index.ts`.
 - El límite de intentos y los desafíos biométricos viven **en memoria**: se reinician si se reinicia el servidor y no funcionan con varias instancias.
@@ -270,6 +302,8 @@ El mismo servidor entrega la API y los portales compilados.
 | [docs/adr/](docs/adr/) | Equipo y quien llegue después | ¿Por qué hicimos esto y no lo otro? |
 | [docs/deuda-tecnica.md](docs/deuda-tecnica.md) | Equipo | ¿Qué atajos tomamos y cómo los vamos a pagar? |
 | [docs/CASOS_DE_PRUEBA.md](docs/CASOS_DE_PRUEBA.md) | Equipo y QA | ¿Cómo comprobamos que funciona? |
+| Manual de usuario (`/ayuda` en la app) | Alumnos, docentes, vigilancia y administración | ¿Cómo uso cada función, paso a paso? |
+| Aviso de privacidad (`/privacidad` en la app) | Toda la comunidad | ¿Qué datos se usan y para qué? |
 
 ---
 
@@ -301,4 +335,4 @@ El mismo servidor entrega la API y los portales compilados.
 
 ## Licencia
 
-Distribuido bajo la licencia MIT. Consulta [LICENSE](LICENSE). <!-- TODO: confirmar licencia con el equipo y agregar el archivo LICENSE -->
+Distribuido bajo la licencia MIT. Consulta [LICENSE](LICENSE).

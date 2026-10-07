@@ -10,6 +10,7 @@ qué alternativas se descartaron y qué consecuencias tiene. Responde a la pregu
 | [0002](0002-sqlite-integrado.md) | SQLite integrado en Node como base de datos | Aceptada |
 | [0003](0003-dos-portales-sesiones-separadas.md) | Dos portales con sesiones y paquetes de código separados | Aceptada |
 | [0004](0004-barreras-ubicacion-y-red.md) | Geocerca con tope de precisión y red del campus como barreras complementarias | Aceptada |
+| [0005](0005-qr-excel-y-avisos-sin-dependencias.md) | Códigos QR, Excel y avisos sin dependencias nuevas | Aceptada |
 
 ## Cómo agregar un ADR
 

@@ -32,7 +32,16 @@ El registro se hace **desde el celular de cada persona**, porque no se dispondr�
 | 7 | Alerta de acceso no autorizado | Could | Incluida | Las alertas se generan automáticamente y vigilancia las marca como revisadas |
 | 8 | Historial con filtros y exportación | Should | En el MVP | Historial por fecha, persona, rol y acceso, con exportación a CSV |
 | 9 | Historial personal del alumno | Could | Incluida | Cada persona ve solo sus registros; el servidor lo restringe por sesión |
-| 10 | Reportes de afluencia para directivos | Won't | **Parcial** | Gráficas de afluencia en el tablero (por hora, día, rol, acceso y denegados). Los reportes descargables siguen en el backlog |
+| 10 | Reportes de afluencia para directivos | Won't | **Incluida** | Gráficas de afluencia en el tablero y reporte descargable en Excel con 10 hojas (registros, por día, por hora, por acceso, alertas, invitados y uso de equipos) |
+| 11 | Aviso de privacidad | Must | Incluida | Página pública `/privacidad` y aceptación obligatoria en el primer ingreso a cada portal (se pide de nuevo si cambia la versión) |
+| 12 | Manual de usuario interactivo | Should | Incluida | Página `/ayuda` con guías paso a paso por tipo de usuario, buscador y preguntas frecuentes |
+| 13 | Mi horario | Should | Incluida (demo) | Alumnos y docentes ven su semana, la clase en curso y la siguiente. Sin conexión con Control Escolar se muestra un horario ficticio de 7.º de Informática |
+| 14 | Invitados con QR | Should | Incluida | Docentes y personal crean invitaciones; el invitado recibe una liga con su QR y vigilancia lo admite escaneándolo. El anfitrión recibe un aviso |
+| 15 | Avisos en el celular | Could | Incluida | Centro de avisos con campana y notificaciones del navegador: credencial por vencer, salida olvidada, invitado que llegó, dispositivo vinculado, emergencia |
+| 16 | Lista de emergencia | Should | Incluida | Simulacro o emergencia: avisa a quien está dentro y vigilancia marca a cada persona a salvo en el punto de reunión |
+| 17 | Uso de equipos del laboratorio | Could | Incluida | Cada equipo tiene etiqueta QR; la persona la escanea y confirma con biometría. Las fallas y el mal uso se ligan a quien usaba el equipo |
+| 18 | Pantallas de salón con PIN | Could | Incluida (simulada) | PIN de 6 dígitos que cambia en cada clase y solo ve el docente de ese salón. La pantalla real se simula en `/pantalla/:id` |
+| 19 | Mapa del campus | Could | Backlog | Pendiente hasta contar con el plano oficial del centro |
 
 ## 3. Roles
 
@@ -60,9 +69,15 @@ Los invitados no tienen cuenta: vigilancia los registra con un pase temporal.
 6. Cada intento rechazado genera una **alerta** para vigilancia con el motivo.
 7. **Biometría**: un solo dispositivo por persona. Cambiarlo lo autoriza la administración.
 8. **Portal institucional**: puede limitarse a las IP de las computadoras de vigilancia y administración.
+9. **Invitaciones**: solo docentes y personal pueden invitar. Valen únicamente el día indicado y se usan una sola vez.
+10. **Equipos**: solo quien está dentro del campus puede tomar un equipo; un equipo ocupado o fuera de servicio no se puede tomar; al salir del campus se libera. Una incidencia se liga a quien usaba el equipo en la última hora.
+11. **PIN de pantallas**: dura lo que dura la clase (o una hora si no hay clase); el docente lo ve desde 10 minutos antes.
+12. **Privacidad**: nadie usa un portal sin aceptar la versión vigente del aviso de privacidad.
 
 ## 5. Fuera de alcance en este ciclo
 
-- Reportes descargables de afluencia para directivos (historia 10). Las gráficas del tablero sí están incluidas.
+- Conexión real con Control Escolar (horarios) y con las pantallas de los salones (PIN): en la demo se simulan.
+- Notificaciones push con la aplicación cerrada (requieren un servicio de envío; ver DT-07).
+- Mapa del campus (historia 19).
 - Integración con torniquetes, lectores de credencial o el directorio institucional.
 - Aplicación nativa: la primera versión es una aplicación web que funciona en el navegador del celular.

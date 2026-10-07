@@ -20,6 +20,7 @@ npm test
 | `server/test/reglas.test.ts` | Distancia entre coordenadas, vigencia de credencial, correo institucional y matrícula |
 | `server/test/acceso.test.ts` | Entrada, salida, duplicados, incidencias, credencial vencida, rol no permitido, geocerca, registro manual, entradas sin salida, biometría, red del campus y afluencia |
 | `server/test/red.test.ts` | Rangos de IP permitidos (IPv4, IPv6, localhost) y validación de rangos mal escritos |
+| `server/test/campus.test.ts` | Código QR, horario (clase en curso y siguiente), invitaciones (admitir, fecha futura, fecha pasada), equipos de laboratorio, PIN de pantallas y su simulador, lista de emergencia, avisos automáticos, reporte de Excel y datos de demostración |
 
 ---
 
@@ -50,5 +51,16 @@ npm test
 | CP-19 | 10 | Registros de varios días | Vigilancia cambia el periodo de las gráficas a 7, 14 y 30 días | Todas las gráficas y el resumen se actualizan; "Ver datos en tabla" muestra los mismos números | | |
 | CP-20 | — | Cualquier pantalla | La persona abre **Lectura** y elige tema oscuro y texto muy grande | Toda la interfaz cambia sin recargar y la preferencia se conserva al volver | | |
 | CP-21 | — | Navegación solo con teclado | La persona presiona Tab al entrar a un portal | Aparece "Saltar al contenido" y el foco siempre es visible | | |
+| CP-22 | 11 | Una persona que nunca ha aceptado el aviso | Inicia sesión | Aparece el aviso de privacidad y no puede usar el portal hasta aceptarlo; la segunda vez ya no aparece | | |
+| CP-23 | 12 | Cualquier persona en `/ayuda` | Elige "Docente" y busca "QR" | Solo aparecen guías de docente que mencionan QR y puede recorrer sus pasos con Siguiente/Anterior | | |
+| CP-24 | 13 | Demo cargada; la alumna 990000002 un lunes a las 10:00 | Abre **Horario** | Ve "Ingeniería de Software II" como clase en curso y "Redes de Computadoras" como siguiente | | |
+| CP-25 | 14 | El docente 990000001 | Crea una invitación para hoy y vigilancia escanea su QR | Vigilancia ve los datos, toca **Admitir**; el invitado aparece dentro y el docente recibe el aviso "ya llegó" | | |
+| CP-26 | 14 | Una invitación ya usada | Vigilancia la vuelve a escanear | Se rechaza indicando que ya se usó | | |
+| CP-27 | 15 | La alumna con avisos activados | Vigilancia inicia un simulacro | A la alumna le llega la notificación en el celular y la campana muestra el aviso | | |
+| CP-28 | 16 | Demo cargada | Vigilancia inicia un **simulacro** y marca a 3 personas | El contador muestra 3 a salvo y "Faltan" no las incluye; al terminar queda en la bitácora | | |
+| CP-29 | 17 | La alumna dentro del campus | Escanea la etiqueta de un equipo libre y confirma | El equipo aparece a su nombre en el mapa del laboratorio; otra persona no puede tomarlo | | |
+| CP-30 | 17 | Un equipo en uso | El encargado registra "contraseña pegada en el monitor" | La incidencia muestra a la persona que usaba el equipo | | |
+| CP-31 | 18 | Demo cargada | Se abre el simulador de pantalla y se escribe un PIN incorrecto y luego el vigente | El incorrecto se rechaza; el vigente conecta. Tras 5 intentos fallidos se bloquea 5 minutos | | |
+| CP-32 | 10 | Demo cargada | Vigilancia descarga el reporte de los últimos 7 días | Excel abre el archivo con 10 hojas, encabezados fijos y filtros | | |
 
 **Resultado:** ✅ pasa · ❌ falla (abrir un *issue* con los pasos) · ⏸️ bloqueado
