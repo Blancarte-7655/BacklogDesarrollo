@@ -6,7 +6,7 @@
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)
 ![Licencia](https://img.shields.io/badge/licencia-MIT-blue)
-[![CI](https://github.com/DannNS20/BacklogDesarrollo/actions/workflows/ci.yml/badge.svg)](https://github.com/DannNS20/BacklogDesarrollo/actions/workflows/ci.yml)
+[![CI](https://github.com/Blancarte-7655/BacklogDesarrollo/actions/workflows/ci.yml/badge.svg)](https://github.com/Blancarte-7655/BacklogDesarrollo/actions/workflows/ci.yml)
 
 🇺🇸 [English version](README.en.md)
 
@@ -97,7 +97,7 @@ La plataforma tiene **dos portales separados**, cada uno con su propia sesión:
 
 ```bash
 # 1. Clona el repositorio
-git clone https://github.com/DannNS20/BacklogDesarrollo.git
+git clone git clone https://github.com/Blancarte-7655/BacklogDesarrollo.git
 cd BacklogDesarrollo
 
 # 2. Instala dependencias

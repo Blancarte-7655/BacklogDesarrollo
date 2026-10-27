@@ -51,7 +51,7 @@ Two separate portals, each with its own session:
 **Requirements:** [Node.js 22.13+](https://nodejs.org/) (built-in SQLite, no database to install).
 
 ```bash
-git clone https://github.com/DannNS20/BacklogDesarrollo.git
+git clone git clone https://github.com/Blancarte-7655/BacklogDesarrollo.git
 cd BacklogDesarrollo
 npm install
 cp .env.example .env        # Windows (PowerShell): Copy-Item .env.example .env
