@@ -3,6 +3,9 @@
 Los atajos que tomamos conscientemente para entregar el MVP y que **debemos pagar**. Cada deuda
 tiene prioridad, impacto, una solución propuesta y un esfuerzo estimado (S, M, L).
 
+Los impedimentos que frenaron al equipo están en [bloqueos.md](bloqueos.md); las decisiones de
+arquitectura, en los [ADR](adr/).
+
 **Prioridad:** 🔴 Alta (riesgo de seguridad o de datos) · 🟠 Media (frena el crecimiento) · 🟢 Baja (calidad)
 
 ## Resumen
@@ -12,9 +15,11 @@ tiene prioridad, impacto, una solución propuesta y un esfuerzo estimado (S, M, 
 | DT-01 | Límite de intentos y desafíos biométricos en memoria | 🔴 Alta | M | Pendiente |
 | DT-02 | La ubicación la reporta el cliente | 🔴 Alta | L | Mitigada (red del campus) |
 | DT-03 | Sin migraciones de esquema versionadas | 🟠 Media | M | Pendiente |
-| DT-04 | Sin pruebas de interfaz ni de extremo a extremo | 🟠 Media | M | Pendiente |
+| DT-04 | Sin pruebas de interfaz ni de extremo a extremo | 🟠 Media | M | ✅ Pagada (2026-10-26) |
 | DT-05 | `node:sqlite` aún experimental | 🟢 Baja | S | En observación |
 | DT-06 | Avisos de lint en componentes de animación copiados | 🟢 Baja | S | Pendiente |
+| DT-07 | Las pruebas E2E comparten base de datos y corren en serie | 🟢 Baja | S | Pendiente |
+| DT-08 | Las fuentes tipográficas se cargan desde Google Fonts | 🟢 Baja | S | Pendiente |
 
 ---
 
@@ -63,6 +68,11 @@ tiene prioridad, impacto, una solución propuesta y un esfuerzo estimado (S, M, 
 - **Solución propuesta:** Playwright con 3 flujos críticos (inicio de sesión, registrar entrada y
   salida, emitir pase de invitado) corriendo en la GitHub Action.
 - **Esfuerzo:** M.
+- **✅ Pagada (2026-10-26):** se fue más allá de los 3 flujos: los 21 casos de
+  [CASOS_DE_PRUEBA.md](CASOS_DE_PRUEBA.md#pruebas-de-aceptación-e2e) están automatizados en
+  [`e2e/`](../e2e/) con Playwright, incluida la biometría con un autenticador virtual, y corren en
+  el job *Pruebas de aceptación (E2E)* de la [GitHub Action](../.github/workflows/ci.yml).
+  Destrabó el bloqueo [BL-10](bloqueos.md#bl-10--los-casos-manuales-no-quedaban-registrados).
 
 ## DT-05 · `node:sqlite` aún experimental 🟢
 
@@ -81,6 +91,29 @@ tiene prioridad, impacto, una solución propuesta y un esfuerzo estimado (S, M, 
   efectos) que pueden causar renders de más.
 - **Solución propuesta:** mover las asignaciones de refs a `useEffect`, derivar estados en el
   render y dejar el lint sin avisos para que los nuevos se noten.
+- **Esfuerzo:** S.
+
+## DT-07 · Las pruebas E2E comparten base de datos y corren en serie 🟢
+
+- **Dónde:** [`playwright.config.ts`](../playwright.config.ts) (`workers: 1`) y [`e2e/`](../e2e/).
+- **Atajo:** cada servidor de pruebas usa una sola base de datos para todas las pruebas, así que se
+  ejecutan una tras otra; algunas (red del campus) cambian una configuración global y la restauran
+  al terminar.
+- **Impacto:** la suite tarda ≈3 min y crecerá linealmente con cada caso nuevo; si una prueba falla
+  a la mitad sin limpiar, puede afectar a la siguiente.
+- **Solución propuesta:** un servidor por *worker* (puerto y `DATA_DIR` distintos) o un endpoint de
+  pruebas que reinicie la base, para correrlas en paralelo.
+- **Esfuerzo:** S.
+
+## DT-08 · Las fuentes tipográficas se cargan desde Google Fonts 🟢
+
+- **Dónde:** `index.html` (enlace a Atkinson Hyperlegible y Bricolage Grotesque).
+- **Atajo:** se usan las fuentes directamente desde `fonts.googleapis.com`.
+- **Impacto:** sin internet (o con la red del campus filtrada) la app se ve con las fuentes del
+  sistema en lugar de la tipografía accesible elegida; además, Google recibe la IP de cada
+  visitante. Se detectó al correr las pruebas E2E en un entorno sin salida a internet.
+- **Solución propuesta:** instalar las fuentes como paquetes (`@fontsource/…`) para servirlas desde
+  el mismo servidor.
 - **Esfuerzo:** S.
 
 ---

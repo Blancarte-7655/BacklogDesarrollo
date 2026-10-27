@@ -1,4 +1,4 @@
-# Revisión automática de cada Pull Request: tipos, estilo y pruebas
+# Revisión automática de cada Pull Request: tipos, estilo, pruebas unitarias/integración y aceptación (E2E)
 name: CI
 
 on:
@@ -26,7 +26,38 @@ jobs:
       - name: Revisión de estilo
         run: npm run lint
 
-      - name: Pruebas
+      - name: Pruebas unitarias y de integración
         run: npm test
         env:
           TZ: America/Mexico_City
+
+  aceptacion:
+    name: Pruebas de aceptación (E2E)
+    runs-on: ubuntu-latest
+    needs: verificar
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Instalar Chromium para Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Compilar y ejecutar las pruebas de aceptación
+        run: npm run test:e2e
+        env:
+          TZ: America/Mexico_City
+
+      - name: Guardar el reporte de Playwright
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: reporte-playwright
+          path: playwright-report/
+          retention-days: 14

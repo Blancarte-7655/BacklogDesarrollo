@@ -91,7 +91,6 @@ On first run the server creates the **initial admin** from `.env` and three samp
 - Traffic charts exist, but downloadable reports for management (user story 10) are not built yet.
 - Location is reported by the phone and can be spoofed; the geofence is a deterrent, not a guarantee.
 - Rate limiting and WebAuthn challenges are in memory (reset on restart, single instance only).
-- Run `npm test` for the automated tests of the access rules.
 
 ---
 
@@ -110,13 +109,24 @@ HTTPS is required for biometrics and geolocation. Set `APP_ORIGIN` to the exact 
 
 - [Architecture Decision Records](docs/adr/) (in Spanish): why we chose WebAuthn, built-in SQLite, two separate portals and the location and network checks.
 - [Technical debt log](docs/deuda-tecnica.md) (in Spanish): known shortcuts, prioritized, with proposed fixes.
-- [Test cases](docs/CASOS_DE_PRUEBA.md) (in Spanish).
+- [Test cases](docs/CASOS_DE_PRUEBA.md) (in Spanish): unit, integration and end-to-end acceptance tests, each linked to its code.
+- [Blockers log](docs/bloqueos.md) (in Spanish): what slowed the team down and how it was unblocked.
+
+## Tests
+
+```bash
+npm test                          # unit + integration (node:test)
+npx playwright install chromium   # first time only
+npm run test:e2e                  # end-to-end acceptance tests (Playwright)
+```
+
+All of them run on every Pull Request through the GitHub Action.
 
 ---
 
 ## Contributing
 
-Fork → branch per change (`feat/…`, `fix/…`, `docs/…`) → [Conventional Commits](https://www.conventionalcommits.org/) → run `npm run typecheck` and `npm run lint` → open a Pull Request to `main`. Every PR needs at least one review from a teammate.
+Fork → branch per change (`feat/…`, `fix/…`, `docs/…`) → [Conventional Commits](https://www.conventionalcommits.org/) → run `npm run typecheck`, `npm run lint` and the tests → open a Pull Request to `main`. Every PR needs at least one review from a teammate.
 
 ---
 

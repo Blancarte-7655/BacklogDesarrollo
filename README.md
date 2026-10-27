@@ -6,6 +6,7 @@
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)
 ![Licencia](https://img.shields.io/badge/licencia-MIT-blue)
+[![CI](https://github.com/DannNS20/BacklogDesarrollo/actions/workflows/ci.yml/badge.svg)](https://github.com/DannNS20/BacklogDesarrollo/actions/workflows/ci.yml)
 
 🇺🇸 [English version](README.en.md)
 
@@ -29,6 +30,7 @@ Proyecto de la materia **Seminario de Integración: Desarrollo** · 7.º semestr
 - [Probar la demo](#probar-la-demo)
 - [Variables de entorno](#variables-de-entorno)
 - [Arquitectura](#arquitectura)
+- [Pruebas](#pruebas)
 - [Seguridad](#seguridad)
 - [Privacidad de datos](#privacidad-de-datos)
 - [Limitaciones conocidas](#limitaciones-conocidas)
@@ -126,7 +128,9 @@ La primera vez, el servidor crea el **administrador inicial** con los datos de `
 | `npm start` | Servidor de producción (API + portales compilados) |
 | `npm run typecheck` | Revisión de tipos con TypeScript |
 | `npm run lint` | Revisión de estilo con oxlint |
-| `npm test` | Pruebas automatizadas de las reglas de acceso (ver [casos de prueba](docs/CASOS_DE_PRUEBA.md)) |
+| `npm test` | Pruebas unitarias y de integración (≈2 s) |
+| `npm run test:e2e` | Compila la app y corre las pruebas de aceptación en el navegador con Playwright (≈3 min) |
+| `npm run test:all` | Todas las pruebas |
 
 ---
 
@@ -188,7 +192,8 @@ Copia `.env.example` como `.env`. Las principales:
 ### Estructura de carpetas
 
 ```
-docs/ALCANCE.md         Historias de usuario, MoSCoW y reglas de negocio
+docs/                   Alcance, casos de prueba, bloqueos, deuda técnica y ADR
+e2e/                    Pruebas de aceptación (Playwright), una por caso CP-xx
 shared/                 Contratos de datos y reglas compartidas por API y portales
 server/src/
   db/                   Esquema SQL, conexión y datos iniciales
@@ -196,11 +201,32 @@ server/src/
   middleware/           Autenticación por portal
   routes/               auth, person y staff/* (operación, personas, configuración)
   services/             Lógica de acceso, invitados, alertas y biometría
+server/test/            Pruebas unitarias y de integración (node:test)
 src/
   portals/Landing.tsx   Portada
   portals/person/       Portal de acceso (celular)
   portals/staff/        Portal institucional (vigilancia y administración)
   ui/  components/      Componentes reutilizables
+```
+
+---
+
+## Pruebas
+
+El proyecto tiene tres niveles de pruebas automatizadas. Todas corren en cada Pull Request con la
+[GitHub Action](.github/workflows/ci.yml). El detalle de cada prueba —qué comprueba, a qué historia
+responde y su enlace al código— está en **[docs/CASOS_DE_PRUEBA.md](docs/CASOS_DE_PRUEBA.md)**.
+
+| Nivel | Qué cubre | Ubicación | Resultado (26/10/2026) |
+| --- | --- | --- | --- |
+| Unitarias | Distancia y geocerca, vigencia de credencial, correo y matrícula, rangos de IP | [`server/test/reglas.test.ts`](server/test/reglas.test.ts), [`server/test/red.test.ts`](server/test/red.test.ts) | ✅ 20/20 |
+| Integración | Entrada, salida, incidencias, rol, geocerca, registro manual, biometría, red y afluencia sobre SQLite temporal | [`server/test/acceso.test.ts`](server/test/acceso.test.ts) | ✅ 20/20 |
+| Aceptación (E2E) | Los 21 casos CP-01 a CP-21 en Chromium, contra la app compilada (incluye biometría con autenticador virtual) | [`e2e/`](e2e/) | ✅ 19/19 pruebas · 21/21 casos |
+
+```bash
+npm test               # unitarias + integración
+npx playwright install chromium   # solo la primera vez
+npm run test:e2e       # aceptación
 ```
 
 ---
@@ -228,7 +254,7 @@ En apego a la *Ley Federal de Protección de Datos Personales en Posesión de lo
 | Ubicación al registrar (si hay geocerca) | Sí, en el registro | Validar que la persona estaba en el acceso |
 | Huella o rostro | **No** | La verificación ocurre en el teléfono; el servidor solo recibe una firma |
 
-<!-- TODO: enlazar el aviso de privacidad y definir cuánto tiempo se conservan los registros -->
+> **Pendiente:** el aviso de privacidad y el plazo de conservación de los registros los debe definir la institución; su seguimiento está en el bloqueo [BL-09](docs/bloqueos.md#bl-09--falta-el-aviso-de-privacidad-y-el-plazo-de-conservación). Hasta tenerlos, el sistema no debe usarse con datos reales.
 
 ---
 
@@ -269,7 +295,8 @@ El mismo servidor entrega la API y los portales compilados.
 | [docs/ALCANCE.md](docs/ALCANCE.md) | Equipo y docente | ¿Qué historias de usuario cubre y con qué reglas? |
 | [docs/adr/](docs/adr/) | Equipo y quien llegue después | ¿Por qué hicimos esto y no lo otro? |
 | [docs/deuda-tecnica.md](docs/deuda-tecnica.md) | Equipo | ¿Qué atajos tomamos y cómo los vamos a pagar? |
-| [docs/CASOS_DE_PRUEBA.md](docs/CASOS_DE_PRUEBA.md) | Equipo y QA | ¿Cómo comprobamos que funciona? |
+| [docs/CASOS_DE_PRUEBA.md](docs/CASOS_DE_PRUEBA.md) | Equipo y QA | ¿Cómo comprobamos que funciona? (unitarias, integración y aceptación, con enlaces) |
+| [docs/bloqueos.md](docs/bloqueos.md) | Equipo y Scrum Master | ¿Qué nos frenó y cómo lo destrabamos? |
 
 ---
 
@@ -279,15 +306,13 @@ El mismo servidor entrega la API y los portales compilados.
 2. Crea una rama por cambio: `feat/…`, `fix/…` o `docs/…` (por ejemplo, `docs/readme`).
 3. Escribe commits con [Conventional Commits](https://www.conventionalcommits.org/es/):
    `feat: agrega filtro por acceso`, `fix: evita salida duplicada`, `docs: actualiza README`.
-4. Antes de subir, verifica que pasen `npm run typecheck` y `npm run lint`.
+4. Antes de subir, verifica que pasen `npm run typecheck`, `npm run lint`, `npm test` y, si cambiaste la interfaz, `npm run test:e2e`.
 5. Abre un **Pull Request** hacia `main` describiendo qué cambió y cómo probarlo.
    Se necesita **al menos una revisión** de otro integrante para hacer *merge*.
 
 ---
 
 ## Equipo
-
-<!-- TODO: completar con los integrantes -->
 
 | Integrante | Rol en Scrum | GitHub |
 | --- | --- | --- |
@@ -301,4 +326,4 @@ El mismo servidor entrega la API y los portales compilados.
 
 ## Licencia
 
-Distribuido bajo la licencia MIT. Consulta [LICENSE](LICENSE). <!-- TODO: confirmar licencia con el equipo y agregar el archivo LICENSE -->
+Distribuido bajo la licencia MIT. Consulta [LICENSE](LICENSE).
