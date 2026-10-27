@@ -25,3 +25,8 @@ server/data/
 *.njsproj
 *.sln
 *.sw?
+
+# Resultados de las pruebas E2E (Playwright)
+test-results/
+playwright-report/
+blob-report/
