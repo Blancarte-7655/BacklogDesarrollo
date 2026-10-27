@@ -97,7 +97,7 @@ La plataforma tiene **dos portales separados**, cada uno con su propia sesión:
 
 ```bash
 # 1. Clona el repositorio
-git clone git clone https://github.com/Blancarte-7655/BacklogDesarrollo.git
+git clone https://github.com/Blancarte-7655/BacklogDesarrollo.git
 cd BacklogDesarrollo
 
 # 2. Instala dependencias
