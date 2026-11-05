@@ -296,6 +296,7 @@ El mismo servidor entrega la API y los portales compilados.
 | [docs/adr/](docs/adr/) | Equipo y quien llegue después | ¿Por qué hicimos esto y no lo otro? |
 | [docs/deuda-tecnica.md](docs/deuda-tecnica.md) | Equipo | ¿Qué atajos tomamos y cómo los vamos a pagar? |
 | [docs/CASOS_DE_PRUEBA.md](docs/CASOS_DE_PRUEBA.md) | Equipo y QA | ¿Cómo comprobamos que funciona? (unitarias, integración y aceptación, con enlaces) |
+| [docs/retrospectiva.md](docs/retrospectiva.md) | Equipo | ¿Qué aprendimos y cómo cambió el backlog? |
 | [docs/bloqueos.md](docs/bloqueos.md) | Equipo y Scrum Master | ¿Qué nos frenó y cómo lo destrabamos? |
 
 ---
