@@ -24,6 +24,7 @@ bloqueo se destraba con un atajo, se enlaza la deuda que generó.
 | [BL-09](#bl-09--falta-el-aviso-de-privacidad-y-el-plazo-de-conservación) | Falta el aviso de privacidad y el plazo de conservación | 9 | 2026-10-06 | 🔴 Abierto | Requiere decisión de la institución |
 | [BL-10](#bl-10--los-casos-manuales-no-quedaban-registrados) | Los casos manuales no quedaban registrados | Todas | 2026-10-26 | 🟢 Resuelto | Pruebas E2E con Playwright · [DT-04](deuda-tecnica.md#dt-04--sin-pruebas-de-interfaz-ni-de-extremo-a-extremo-) |
 | [BL-11](#bl-11--sin-acceso-a-la-base-de-datos-institucional) | Sin acceso a la base de datos institucional | 6, 11 | 2026-11-02 | 🔴 Abierto | Solicitud del PO a la universidad |
+| [BL-12](#bl-12--faltan-los-rangos-de-red-del-campus) | Faltan los rangos de red del campus | 1, 12 | 2026-11-02 | 🔴 Abierto | Solicitud a TI |
 ---
 
 ## BL-01 · No hay hardware de control en los accesos
@@ -151,6 +152,23 @@ bloqueo se destraba con un atajo, se enlaza la deuda que generó.
   que corren en la GitHub Action y en local con `npm run test:e2e`. Cada caso CP-xx tiene su prueba.
 - **Evidencia:** [CASOS_DE_PRUEBA.md](CASOS_DE_PRUEBA.md),
   [DT-04 (pagada)](deuda-tecnica.md#dt-04--sin-pruebas-de-interfaz-ni-de-extremo-a-extremo-).
+
+  ## BL-11 · Sin acceso a la base de datos institucional
+
+- **Qué pasó:** para que el login use las cuentas reales de alumnos y personal se necesita acceso a la
+  base de datos de la universidad, que aún no se tiene.
+- **Impacto:** las cuentas se crean a mano desde administración; no se puede pasar a uso real.
+- **Siguiente paso:** el PO lo solicita a la universidad; al tenerlo, se conecta el login en 5 días
+  (historia 11 de la [retrospectiva](retrospectiva.md)).
+- **Responsable:** Kevin (solicitud) · Alberto (integración).
+
+## BL-12 · Faltan los rangos de red del campus
+
+- **Qué pasó:** la restricción por red ya está programada, pero TI no ha compartido los rangos de IP
+  del WiFi del campus ni de las computadoras de vigilancia.
+- **Impacto:** la única barrera de ubicación es la geocerca, que reporta el celular ([DT-02](deuda-tecnica.md)).
+- **Siguiente paso:** al recibir los rangos se configuran en *Redes permitidas* y se prueban en el campus.
+- **Responsable:** Fernando.
 
 ---
 
