@@ -167,7 +167,7 @@ bloqueo se destraba con un atajo, se enlaza la deuda que generó.
 - **Qué pasó:** la restricción por red ya está programada, pero TI no ha compartido los rangos de IP
   del WiFi del campus ni de las computadoras de vigilancia.
 - **Impacto:** la única barrera de ubicación es la geocerca, que reporta el celular ([DT-02](deuda-tecnica.md)).
-- **Siguiente paso:** al recibir los rangos se configuran en *Redes permitidas* y se prueban en el campus.
+- **Siguiente paso:** al recibir los rangos se configuran en Redes permitidas y se prueban en el campus.
 - **Responsable:** Fernando
 
 ---
