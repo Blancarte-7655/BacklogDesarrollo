@@ -32,7 +32,7 @@ El registro se hace **desde el celular de cada persona**, porque no se dispondr�
 | 7 | Alerta de acceso no autorizado | Could | Incluida | Las alertas se generan automáticamente y vigilancia las marca como revisadas |
 | 8 | Historial con filtros y exportación | Should | En el MVP | Historial por fecha, persona, rol y acceso, con exportación a CSV |
 | 9 | Historial personal del alumno | Could | Incluida | Cada persona ve solo sus registros; el servidor lo restringe por sesión |
-| 10 | Reportes de afluencia para directivos | Won't | **Parcial** | Gráficas de afluencia en el tablero (por hora, día, rol, acceso y denegados). Los reportes descargables siguen en el backlog |
+| 10 | Reportes de afluencia para directivos | Should | **En progreso** | Gráficas de afluencia en el tablero (por hora, día, rol, acceso y denegados). Reportes descargables en PDF / Excel en desarrollo (ver [retrospectiva](retrospectiva.md)) |
 
 ## 3. Roles
 
