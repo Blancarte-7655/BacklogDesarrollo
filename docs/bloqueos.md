@@ -23,7 +23,7 @@ bloqueo se destraba con un atajo, se enlaza la deuda que generó.
 | [BL-08](#bl-08--no-hay-servidor-de-correo-institucional) | No hay servidor de correo institucional | 6 | 2026-09-30 | 🟡 Mitigado | Bandeja local `server/data/outbox` |
 | [BL-09](#bl-09--falta-el-aviso-de-privacidad-y-el-plazo-de-conservación) | Falta el aviso de privacidad y el plazo de conservación | 9 | 2026-10-06 | 🔴 Abierto | Requiere decisión de la institución |
 | [BL-10](#bl-10--los-casos-manuales-no-quedaban-registrados) | Los casos manuales no quedaban registrados | Todas | 2026-10-26 | 🟢 Resuelto | Pruebas E2E con Playwright · [DT-04](deuda-tecnica.md#dt-04--sin-pruebas-de-interfaz-ni-de-extremo-a-extremo-) |
-
+| [BL-11](#bl-11--sin-acceso-a-la-base-de-datos-institucional) | Sin acceso a la base de datos institucional | 6, 11 | 2026-11-02 | 🔴 Abierto | Solicitud del PO a la universidad |
 ---
 
 ## BL-01 · No hay hardware de control en los accesos
