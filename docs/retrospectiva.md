@@ -82,6 +82,7 @@ siguiente ciclo queda así:
 | DT-03 | Migraciones de esquema versionadas | Pendiente · Media | **Prioridad alta, antes de la historia 10** | Los reportes necesitan columnas nuevas y hoy eso obliga a borrar la base ([BL-07](bloqueos.md#bl-07--los-cambios-de-esquema-obligan-a-borrar-la-base)) |
 | 15 | Login con la base de datos institucional de alumnos y personal | — | **Nueva · Must** (depende del acceso) | Para usar cuentas reales en lugar de cuentas creadas por administración |
 | 16 | Activar la restricción por red con los rangos de IP de TI | Programada, sin datos | **Nueva · Should** (depende de TI) | La ubicación la reporta el celular ([DT-02](deuda-tecnica.md)); la red del campus es la segunda barrera |
+| 14b | Recuperación de contraseña por correo (autoservicio) | — | **Nueva · Could** (bloqueada por BL-08) | Hoy solo administración restablece la contraseña; falta un servidor de correo institucional |
 | DT-01 | Límite de intentos y desafíos biométricos en memoria | Pendiente · Alta | **Se mantiene en el siguiente ciclo** | Riesgo de seguridad si el servidor se reinicia o se usan varias instancias |
 | BL-09 | Aviso de privacidad y plazo de conservación | Abierto | **Tarea del PO** | Sin aviso no se puede usar con datos reales |
 | — | Comentarios del formulario del Sprint Review | — | **Se agregan al cerrar la ronda de 48 h** | Feedback de stakeholders, con la etiqueta `feedback-review` |
