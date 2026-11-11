@@ -153,7 +153,7 @@ bloqueo se destraba con un atajo, se enlaza la deuda que generó.
 - **Evidencia:** [CASOS_DE_PRUEBA.md](CASOS_DE_PRUEBA.md),
   [DT-04 (pagada)](deuda-tecnica.md#dt-04--sin-pruebas-de-interfaz-ni-de-extremo-a-extremo-).
 
-  ## BL-13 · Sin acceso a la base de datos institucional
+  ## BL-11 · Sin acceso a la base de datos institucional
 
 - **Qué pasó:** para que el login use las cuentas reales de alumnos y personal se necesita acceso a la
   base de datos de la universidad, que aún no se tiene.
@@ -174,7 +174,7 @@ bloqueo se destraba con un atajo, se enlaza la deuda que generó.
 
 ## Cómo registrar un bloqueo
 
-1. Agrégalo a la tabla de resumen con el siguiente número (`BL-13`, …) en cuanto aparezca, aunque
+1. Agrégalo a la tabla de resumen con el siguiente número (`BL-17`, …) en cuanto aparezca, aunque
    aún no tenga solución. Si se puede, abre también un *issue* en GitHub con la etiqueta `bloqueo`.
 2. Describe **qué pasó, a qué historia afecta y qué impacto tiene**.
 3. Coméntalo en la *daily*; el Scrum Master le da seguimiento hasta destrabarlo.
