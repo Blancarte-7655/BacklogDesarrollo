@@ -160,7 +160,7 @@ bloqueo se destraba con un atajo, se enlaza la deuda que generó.
 - **Impacto:** las cuentas se crean a mano desde administración; no se puede pasar a uso real.
 - **Siguiente paso:** el PO lo solicita a la universidad; al tenerlo, se conecta el login en 5 días
   (historia 15 de la [retrospectiva]
-- **Responsable:** Kevin (solicitud) · Alberto (integración).
+- **Responsable:** Osvaldo
 
 ## BL-12 · Faltan los rangos de red del campus
 
@@ -174,7 +174,7 @@ bloqueo se destraba con un atajo, se enlaza la deuda que generó.
 
 ## Cómo registrar un bloqueo
 
-1. Agrégalo a la tabla de resumen con el siguiente número (`BL-11`, …) en cuanto aparezca, aunque
+1. Agrégalo a la tabla de resumen con el siguiente número (`BL-17`, …) en cuanto aparezca, aunque
    aún no tenga solución. Si se puede, abre también un *issue* en GitHub con la etiqueta `bloqueo`.
 2. Describe **qué pasó, a qué historia afecta y qué impacto tiene**.
 3. Coméntalo en la *daily*; el Scrum Master le da seguimiento hasta destrabarlo.
